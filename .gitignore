@@ -1,3 +1,14 @@
+# =========================
+#Eclipse Build and Binary files
+# =========================
+dist/
+bin/
+build/
+
+
+# =========================
+# General Java Files
+# =========================
 *.class
 
 # Mobile Tools for Java (J2ME)
