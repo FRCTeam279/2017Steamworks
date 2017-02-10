@@ -1,15 +1,18 @@
 package org.usfirst.frc.team279.robot.commands;
 
+import org.usfirst.frc.team279.robot.Robot;
+
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class DriveTeleopDefaultFPS extends Command {
-
-    public DriveTeleopDefaultFPS() {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
+public class SaveConfig extends Command {
+	public SaveConfig() {
+    	super("SaveConfig"); 
+    	this.setInterruptible(false);
+    	this.setRunWhenDisabled(true);
     }
 
     // Called just before this Command runs the first time
@@ -18,11 +21,17 @@ public class DriveTeleopDefaultFPS extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+    	Preferences pref = Preferences.getInstance();
+    	pref.save();
+    	//Robot.oi.loadPrefs();
+    	//Robot.driveLine.loadPrefs();
+
+    	System.out.println("Preferences: Save called...");
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return false;
+        return true;
     }
 
     // Called once after isFinished returns true
@@ -34,3 +43,4 @@ public class DriveTeleopDefaultFPS extends Command {
     protected void interrupted() {
     }
 }
+

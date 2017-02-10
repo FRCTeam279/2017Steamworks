@@ -1,5 +1,7 @@
 package org.usfirst.frc.team279.robot.commands;
 
+import org.usfirst.frc.team279.robot.Robot;
+
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -8,8 +10,10 @@ import edu.wpi.first.wpilibj.command.Command;
 public class DefaultAuto extends Command {
 
     public DefaultAuto() {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
+    	super("DefaultAuto");
+        
+        this.setInterruptible(true);
+        this.setRunWhenDisabled(false);
     }
 
     // Called just before this Command runs the first time
