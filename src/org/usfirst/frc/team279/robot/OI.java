@@ -52,6 +52,16 @@ public class OI {
 	}
 	
 	
+	
+	//--------------------------------------------------------------------------
+	// Buttons 
+	//--------------------------------------------------------------------------
+	private JoystickButton resetGyroBtn = new JoystickButton(rightDriverStick, 2);
+	
+	
+	
+	
+	
 	//--------------------------------------------------------------------------
 	public void readConfig(){
 		System.out.println("OI: Reading Config Started");
@@ -81,6 +91,10 @@ public class OI {
 		} catch (Exception e) {
 			System.out.println("OI: Error instantiating goController: " + e.getMessage());
 		}
+		
+
+
+		resetGyroBtn.whenPressed(new ResetGyro());
 		
 		
 		

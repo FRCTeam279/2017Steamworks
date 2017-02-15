@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team279.robot.Robot;
+import org.usfirst.frc.team279.util.NavHelper;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Joystick;
@@ -69,33 +70,46 @@ public class MecDriveTeleopDefaultFPS extends Command {
     	y = Robot.oi.filterInput(y, Robot.oi.getLeftStickNullZone(), 1);
     	z = Robot.oi.filterInput(z, Robot.oi.getRightStickNullZone(), 1);
     	
-    	//this needs to have configurable parameters
-    	//boolean halfSpeed = Robot.oi.getLeftDriverStick().getTrigger();  
-    	//if(halfSpeed) {
-    	//	x *= 0.5;
-    	//	y *= 0.5;
-    	//}
-    	
     	// mecanum turns faster at slow speed than fast speed.. 
     	//	for precision, our concern is the opposite of how we scale with a tank drive
     	//  we need to scale less the higher our magnitude is
 
+    	//SmartDashboard.putNumber("Drive Joystick Magnitude", leftJoystick.getMagnitude());    	
+    	//SmartDashboard.putNumber("Drive Joystick Dir Degrees", leftJoystick.getDirectionDegrees()); 
     	double magnitude = java.lang.Math.sqrt((x * x) + (y * y));
-    	double scaledTurn = z * (((maxStickMagnitude - magnitude) / maxStickMagnitude) * Robot.mecanumDrive.getTurnSpeedFactor());
-    	//SmartDashboard.putNumber("Drive Scaled Turn", scaledTurn);
+    	//SmartDashboard.putNumber("Drive Magnitude", magnitude);	
+
+    	//https://www.desmos.com/calculator/qykgtdk95i
+    	
+    	// mecanum turns faster at slow speed than fast speed.. 
+    	//	for precision, our concern is the opposite of how we scale with a tank drive
+    	//  we need to scale the turning less the higher our magnitude is
+    	// with no scaling, turning isn't fast enough at full magnitude, so at full magnitude, we want to tone down the magnitude a bit and up the turn to balance it
+    	
+    	
+    	double scaledTurn = z - ((maxStickMagnitude - Math.abs(magnitude) / maxStickMagnitude) * Robot.mecanumDrive.getRotationReductionFactor() * z);
+    	//where rotationFactor is the maximum ammount to reduce turn by at zero throttle, 
+    	//	eg 0.2 (allowing 80% of rotation speed turning in place)
+    	
+    	
+    	double scaledMagnitude = magnitude - (magnitude * z * Robot.mecanumDrive.getMagnitudeVSTurnFactor());
+    	//where magnitudeTurnBorrowFactror is the max amount to reduce Magnitude to allow better turning at full speed
+    	
     	//SmartDashboard.putNumber("Drive z", z);
-    	
-    	//determine how to switch to robot oriented later
-    	//if(false) {
-    	//	roboDrive.mecanumDrive_Polar(magnitude, leftJoystick.getDirectionDegrees(), z);
-    	//} else {
-    		//field oriented
-    	//System.out.println("DriveDefault: xyz: " + x + ", " + y + ", " + z);
+    	//SmartDashboard.putNumber("Drive scaledTurn", scaledTurn);
+    	//SmartDashboard.putNumber("Drive Scaled Magnitude",  scaledMagnitude);
     	
     	
-    	//http://www.pdocs.kauailabs.com/navx-mxp/examples/field-oriented-drive/
-    	roboDrive.mecanumDrive_Cartesian(x, y, scaledTurn, ahrs.getAngle());
-    	//}
+    	//get magnitude and direction of scewing that is not in the desired direction
+    	//calculate reciprocal
+    	//apply
+    	
+    	
+    	//Robot oriented
+    	//roboDrive.mecanumDrive_Polar(scaledMagnitude, leftJoystick.getDirectionDegrees(), scaledTurn);
+    	
+    	//Field Oriented
+    	roboDrive.mecanumDrive_Polar(scaledMagnitude, NavHelper.addDegrees(leftJoystick.getDirectionDegrees(), -1 * ahrs.getAngle()), scaledTurn);
     }
 
     
