@@ -97,7 +97,10 @@ public class MecanumDrive extends Subsystem {
 		return encoderRightRear;
 	}
 		
-	
+	private boolean invertLeftFrontEnc = false;
+	private boolean invertRightFrontEnc = true;
+	private boolean invertLeftRearEnc = false;
+	private boolean invertRightRearEnc = true;
 	
 	public void loadPrefs(){
 		Config c = new Config();
@@ -152,10 +155,10 @@ public class MecanumDrive extends Subsystem {
 		encoderLeftRear = new Encoder(encoderLeftRearPortA,encoderLeftRearPortB);
 		encoderRightRear = new Encoder(encoderRightRearPortA,encoderRightRearPortB);
 		
-		encoderLeftFront.setReverseDirection(invertLeftFront);
-		encoderRightFront.setReverseDirection(invertRightFront);
-		encoderLeftRear.setReverseDirection(invertLeftRear);
-		encoderRightRear.setReverseDirection(invertRightRear);
+		encoderLeftFront.setReverseDirection(invertLeftFrontEnc);
+		encoderRightFront.setReverseDirection(invertRightFrontEnc);
+		encoderLeftRear.setReverseDirection(invertLeftRearEnc);
+		encoderRightRear.setReverseDirection(invertRightRearEnc);
 		
 		double dpp = Math.PI * wheelDiameterInches / encoderPulseCount;
 		encoderLeftFront.setDistancePerPulse(dpp);
