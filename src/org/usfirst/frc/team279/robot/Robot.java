@@ -48,7 +48,7 @@ public class Robot extends IterativeRobot {
 	//--------------------------------------------------------------------------
 	
 	public static final MecanumDrive mecanumDrive = new MecanumDrive();
-	//public static final Ultrasonics ultrasonics = new Ultrasonics();
+	public static final Ultrasonics ultrasonics = new Ultrasonics();
 	public static OI oi;
 	
 	public static NetworkTable boilerTable;
@@ -74,7 +74,7 @@ public class Robot extends IterativeRobot {
 		gearTable   = NetworkTable.getTable("Gear");
 				
 		Robot.mecanumDrive.init();
-		//Robot.ultrasonics.init();
+		Robot.ultrasonics.init();
 		
 		oi = new OI();
 		oi.init();

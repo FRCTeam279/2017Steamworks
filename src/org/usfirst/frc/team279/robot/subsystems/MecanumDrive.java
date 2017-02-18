@@ -23,13 +23,28 @@ public class MecanumDrive extends Subsystem {
 		return roboDrive;
 	}
 	
+	private double wheelDiameterInches = 4.0;
+	public double getWheelDiameterInches(){
+		return wheelDiameterInches;
+	}
+	
+	private int encoderPulseCount = 120;
+	public int getEncoderPulseCount(){
+		return encoderPulseCount;
+	}
+	
+	private int encoderLeftFrontPortA = 0;
+	private int encoderLeftFrontPortB = 1;
+	private int encoderRightFrontPortA = 4;
+	private int encoderRightFrontPortB = 5;
+	private int encoderLeftRearPortA = 2;
+	private int encoderLeftRearPortB = 3;
+	private int encoderRightRearPortA = 6;
+	private int encoderRightRearPortB = 7;
+	
 	//The preferencesPrefix will be prepended to the preferences loaded from the Robot Preferences
 	private String prefPrefix = "md_";
 
-	
-	//****************************************
-	// Speed Controllers
-	//****************************************
 	private int leftFrontSpeedCtrlPort = 0;
 	private int rightFrontSpeedCtrlPort = 2;
 	private int leftRearSpeedCtrlPort = 1;
@@ -52,32 +67,15 @@ public class MecanumDrive extends Subsystem {
 		return driveSpeedFactor;
 	}
 	
-	private double turnSpeedFactor = 1.0; //variable to reduce max turn rate
-	public double getTurnSpeedFactor(){
-		return turnSpeedFactor;
+	private double rotationReductionFactor = 0.2; //variable to reduce max rotation(z) while magnitude (throttle for x/y) is at 0.0
+	public double getRotationReductionFactor(){
+		return rotationReductionFactor;
 	}	
 	
-	
-	
-	
-	//****************************************
-	// Encoders
-	//****************************************
-	private int encoderLeftFrontPortA = 5;
-	private int encoderLeftFrontPortB = 6;
-	private int encoderRightFrontPortA = 7;
-	private int encoderRightFrontPortB = 8;
-	private int encoderLeftRearPortA = 9;
-	private int encoderLeftRearPortB = 10;
-	private int encoderRightRearPortA = 11;
-	private int encoderRightRearPortB = 12;
-	
-	
-	private boolean encoderLeftFrontInvert = false;
-	private boolean encoderRightFrontInvert = false;
-	private boolean encoderLeftRearInvert = false;
-	private boolean encoderRightRearInvert = false;
-	
+	private double magnitudeVSTurnFactor = 0.2; //how much to reduce max magnitude (x/y) when turning to allow better turning at full speed 
+	public double getMagnitudeVSTurnFactor(){
+		return magnitudeVSTurnFactor;
+	}
 	
 	private Encoder encoderLeftFront = null;
 	public Encoder getEncoderLeftFront(){
@@ -95,15 +93,18 @@ public class MecanumDrive extends Subsystem {
 	}
 	
 	private Encoder encoderRightRear = null;
-	public Encoder getEncoderRightREar(){
+	public Encoder getEncoderRightRear(){
 		return encoderRightRear;
 	}
 		
-	
+	private boolean invertLeftFrontEnc = false;
+	private boolean invertRightFrontEnc = true;
+	private boolean invertLeftRearEnc = false;
+	private boolean invertRightRearEnc = true;
 	
 	public void loadPrefs(){
 		Config c = new Config();
-		
+		encoderPulseCount = c.load(prefPrefix + "encoderPulseCount", encoderPulseCount);
 		encoderLeftFrontPortA = c.load(prefPrefix + "encoderLeftFrontPortA", encoderLeftFrontPortA);
 		encoderLeftFrontPortB = c.load(prefPrefix + "encoderLeftFrontPortB", encoderLeftFrontPortB);
 		encoderRightFrontPortA = c.load(prefPrefix + "encoderRightFrontPortA", encoderRightFrontPortA);
@@ -112,12 +113,6 @@ public class MecanumDrive extends Subsystem {
 		encoderLeftRearPortB = c.load(prefPrefix + "encoderLeftRearPortB", encoderLeftRearPortB);
 		encoderRightRearPortA = c.load(prefPrefix + "encoderRightRearPortA", encoderRightRearPortA);
 		encoderRightRearPortB = c.load(prefPrefix + "encoderRightRearPortB", encoderRightRearPortB);
-		
-		encoderLeftFrontInvert = c.load(prefPrefix + "encoderLeftFrontInvert", encoderLeftFrontInvert);
-		encoderRightFrontInvert = c.load(prefPrefix + "encoderRightFrontInvert", encoderLeftFrontInvert);
-		encoderLeftRearInvert = c.load(prefPrefix + "encoderLeftRearInvert", encoderLeftRearInvert);
-		encoderRightRearInvert = c.load(prefPrefix + "encoderRightRearInvert", encoderRightRearInvert);
-		
 		
 		leftFrontSpeedCtrlPort = c.load(prefPrefix + "leftFrontSpeedCtrlPort", leftFrontSpeedCtrlPort);
 		leftRearSpeedCtrlPort = c.load(prefPrefix + "leftRearSpeedCtrlPort", leftRearSpeedCtrlPort);
@@ -130,7 +125,8 @@ public class MecanumDrive extends Subsystem {
 		invertRightRear = c.load(prefPrefix + "invertRightRear", invertRightRear);
 		
 		driveSpeedFactor = c.load(prefPrefix + "driveSpeedFactor", driveSpeedFactor);
-		turnSpeedFactor = c.load(prefPrefix + "turnSpeedFactor", turnSpeedFactor);
+		rotationReductionFactor = c.load(prefPrefix + "rotationReductionFactor", rotationReductionFactor);
+		magnitudeVSTurnFactor = c.load(prefPrefix + "magnitudeVSTurnFactor", magnitudeVSTurnFactor);
 	}
 
 	
@@ -153,18 +149,23 @@ public class MecanumDrive extends Subsystem {
 		roboDrive.setInvertedMotor(MotorType.kFrontRight, invertRightFront);
 		roboDrive.setInvertedMotor(MotorType.kRearLeft, invertLeftRear);
 		roboDrive.setInvertedMotor(MotorType.kRearRight, invertRightRear);
-		
 
-		encoderLeftFront = new Encoder(5,6);
-		encoderRightFront = new Encoder(7,8);
-		encoderLeftRear = new Encoder(9,10);
-		encoderRightRear = new Encoder(11,12);
+		encoderLeftFront = new Encoder(encoderLeftFrontPortA,encoderLeftFrontPortB);
+		encoderRightFront = new Encoder(encoderRightFrontPortA,encoderRightFrontPortB);
+		encoderLeftRear = new Encoder(encoderLeftRearPortA,encoderLeftRearPortB);
+		encoderRightRear = new Encoder(encoderRightRearPortA,encoderRightRearPortB);
 		
-		encoderLeftFront.setReverseDirection(encoderLeftFrontInvert);
-		encoderRightFront.setReverseDirection(encoderRightFrontInvert);
-		encoderLeftRear.setReverseDirection(encoderLeftRearInvert);
-		encoderRightRear.setReverseDirection(encoderRightRearInvert);
+		encoderLeftFront.setReverseDirection(invertLeftFrontEnc);
+		encoderRightFront.setReverseDirection(invertRightFrontEnc);
+		encoderLeftRear.setReverseDirection(invertLeftRearEnc);
+		encoderRightRear.setReverseDirection(invertRightRearEnc);
 		
+		double dpp = Math.PI * wheelDiameterInches / encoderPulseCount;
+		encoderLeftFront.setDistancePerPulse(dpp);
+		encoderLeftRear.setDistancePerPulse(dpp);
+		encoderRightFront.setDistancePerPulse(dpp);
+		encoderRightRear.setDistancePerPulse(dpp);
+		System.out.println("MD: Calculated distance per pulse = " + dpp);	
 		
 		System.out.println("MD: MechenumDrive Init Complete");	
 	}
