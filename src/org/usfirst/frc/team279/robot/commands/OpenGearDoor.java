@@ -13,7 +13,6 @@ public class OpenGearDoor extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.geargizmo.resetCloseSwitch();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -33,11 +32,13 @@ public class OpenGearDoor extends Command {
     // Called once after isFinished returns true
     protected void end() {
     	Robot.geargizmo.stopDoor();
+    	Robot.geargizmo.resetCloseSwitch();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
     	Robot.geargizmo.stopDoor();
+    	Robot.geargizmo.resetCloseSwitch();
     }
 }

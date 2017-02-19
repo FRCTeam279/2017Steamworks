@@ -160,6 +160,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("LR Encoder Val", mecanumDrive.getEncoderLeftRear().get());
 		SmartDashboard.putNumber("RF Encoder Val", mecanumDrive.getEncoderRightFront().get());
 		SmartDashboard.putNumber("RR Encoder Val", mecanumDrive.getEncoderRightRear().get());
+//		SmartDashboard.putBoolean("LS Open", geargizmo.getOpenCount());
+//		SmartDashboard.putBoolean("LS Close", geargizmo.getCloseCount());
 	}
 	
 
