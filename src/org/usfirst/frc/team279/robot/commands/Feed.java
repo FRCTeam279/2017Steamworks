@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class Feed extends Command {
 
     public Feed() {
-        requires(Robot.shooter);
+        requires(Robot.feeder);
     }
 
     protected void initialize() {}
