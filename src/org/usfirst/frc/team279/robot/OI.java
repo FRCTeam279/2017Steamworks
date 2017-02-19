@@ -3,6 +3,8 @@ package org.usfirst.frc.team279.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.buttons.Trigger;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc.team279.robot.commands.*;
@@ -61,15 +63,14 @@ public class OI {
 	
 	//go buttons
 	private JoystickButton harvForwardBtn;
-	private JoystickButton harvStopBtn;
 	private JoystickButton harvBackwardBtn;
-	private JoystickButton shootBtn;
-	private JoystickButton stopShootBtn;
+	private double shootBtn;
+	private double closeShotBtn;
 	private JoystickButton feedBtn;
-	private JoystickButton feedReverseBtn;
-	private JoystickButton stopFeedBtn;
-	private JoystickButton eStop;
-	
+	private JoystickButton feedReverseBtn; //might not need
+	private JoystickButton openGearBtn;
+	private JoystickButton closeGearBtn;
+	private JoystickButton autoGearBtn;
 	
 	
 	
@@ -107,37 +108,47 @@ public class OI {
 		resetGyroBtn = new JoystickButton(rightDriverStick, 2);
 		
 		//GO Buttons
+		shootBtn = 0.75;
+		closeShotBtn = 0.75;
 		harvForwardBtn = new JoystickButton(goController, 1);
-		harvStopBtn = new JoystickButton(goController, 3);
 		harvBackwardBtn = new JoystickButton(goController, 4);
-		shootBtn = new JoystickButton(goController, 9);
-		//stopShootBtn = new JoystickButton(goController, 4);
-		feedBtn = new JoystickButton(goController, 10);
-		//feedReverseBtn = new JoystickButton(goController, 4);
-		//stopFeedBtn = new JoystickButton(goController, 4);
-		eStop = new JoystickButton(goController, 2);
+		feedBtn = new JoystickButton(goController, 3);
+		feedReverseBtn = new JoystickButton(goController, 2);
+		openGearBtn = new JoystickButton(goController, 7);
+		closeGearBtn = new JoystickButton(goController, 8);
+		autoGearBtn = new JoystickButton(goController, 5);
 		
 		
 		//Applying buttons to commands
 		resetGyroBtn.whenPressed(new ResetGyro());
 		
 		harvForwardBtn.whenPressed(new RunHarvelatorFWD());
+		harvForwardBtn.whenReleased(new StopHarvelator());
 		harvBackwardBtn.whenPressed(new RunHarvelatorRWD());
-		harvStopBtn.whenPressed(new StopHarvelator());
+		harvBackwardBtn.whenReleased(new StopHarvelator());
 		
-		shootBtn.whenPressed(new TempShoot());
-		//stopShootBtn.whenPressed(new StopShooter());
+		openGearBtn.whenPressed(new OpenGearDoor());
+		closeGearBtn.whenPressed(new CloseGearDoor());
 		
-		feedBtn.whenPressed(new Feed());
-		//feedReverseBtn.whenPressed(new FeedReverse());
-		//stopFeedBtn.whenPressed(new StopFeed());
-		
-		eStop.whenPressed(new EStop());
-		
+		feedBtn.toggleWhenPressed(new Feed());	
+		feedReverseBtn.toggleWhenPressed(new FeedReverse());
 		
 		
 		System.out.println("OI: Init Complete");
 		return true;   // all good
+	}
+	
+	Command shoot = new TempShoot();
+	Command stopShoot = new StopShooter();
+	public void checkForAxisButtons() {
+		
+		if(goController.getRawAxis(2) > shootBtn) {
+			shoot.start();
+		} else if(goController.getRawAxis(3) > closeShotBtn) {
+			shoot.start();
+		} else {
+			stopShoot.start();
+		}
 	}
 	
 	//--------------------------------------------------------------------------

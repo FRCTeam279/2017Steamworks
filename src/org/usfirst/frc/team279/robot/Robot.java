@@ -52,6 +52,7 @@ public class Robot extends IterativeRobot {
 	public static final Harvelator   harvelator   = new Harvelator();
 	public static final Shooter      shooter      = new Shooter();
 	public static final Feeder       feeder       = new Feeder();
+	public static final GearGizmo    geargizmo    = new GearGizmo();
 	
 	public static OI oi;
 	
@@ -96,11 +97,11 @@ public class Robot extends IterativeRobot {
 			DriverStation.reportError("Robot: Error instantiating Ultrasonics:  " + e.getMessage(), true);
 		}
 		
-//		try {
-//			Robot.geargizmo.init();
-//		} catch(RuntimeException e) {
-//			DriverStation.reportError("Robot: Error instantiating GearGizmo:  " + e.getMessage(), true);
-//		}
+		try {
+			Robot.geargizmo.init();
+		} catch(RuntimeException e) {
+			DriverStation.reportError("Robot: Error instantiating GearGizmo:  " + e.getMessage(), true);
+		}
 		
 		try {
 			Robot.harvelator.init();
@@ -125,10 +126,28 @@ public class Robot extends IterativeRobot {
 		
 		Robot.getAhrs().setAngleAdjustment(ahrsGyroAdjustment);
 		
+		SmartDashboard.putNumber("TurnPID Target", 0.0);
+		SmartDashboard.putNumber("TurnPID P", 0.0001);
+		SmartDashboard.putNumber("TurnPID I", 0.00);
+		SmartDashboard.putNumber("TurnPID D", 0.0);
+		SmartDashboard.putNumber("TurnPID MinSpeed", 0.15);
+		SmartDashboard.putNumber("TurnPID Tolerance", 5.0);
+		SmartDashboard.putData("TurnPID Execute",new YawPID());
+		
+		SmartDashboard.putNumber("DriveEnc Dir",  0.0);
+		SmartDashboard.putNumber("DriveEnc Target", 0.0);
+		SmartDashboard.putNumber("DriveEnc P", 0.00035);
+		SmartDashboard.putNumber("DriveEnc Tolerance", 50);
+		SmartDashboard.putNumber("DriveEnc minSpeed", 0.15);
+		SmartDashboard.putData("DriveEnc Execute LFEnc", new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront()));
+		SmartDashboard.putData("DriveEnc Execute RFEnc", new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderRightFront()));
+		
+		
 		chooser.addDefault("Default Auto", new DefaultAuto());
-		//chooser.addObject("Rotate Angle Degrees", new RotateAngleDegrees(45.0, 0.3));
-		//chooser.addObject("AutoDriveForward", new AutoDriveFoward());
-		SmartDashboard.putData("Auto mode", chooser);		
+		chooser.addObject("Middle Gear", new AutoMiddleGear());
+		chooser.addObject("Left Gear", new AutoLeftGear());
+		chooser.addObject("Right Gear", new AutoRightGear());
+		SmartDashboard.putData("Stupid Ass Chooser", chooser);		
 		
 		SmartDashboard.putData("Save Config",new SaveConfig());
 	}
@@ -137,6 +156,10 @@ public class Robot extends IterativeRobot {
 	//--------------------------------------------------------------------------
 	@Override
 	public void robotPeriodic() {
+		SmartDashboard.putNumber("LF Encoder Val", mecanumDrive.getEncoderLeftFront().get());
+		SmartDashboard.putNumber("LR Encoder Val", mecanumDrive.getEncoderLeftRear().get());
+		SmartDashboard.putNumber("RF Encoder Val", mecanumDrive.getEncoderRightFront().get());
+		SmartDashboard.putNumber("RR Encoder Val", mecanumDrive.getEncoderRightRear().get());
 	}
 	
 
@@ -171,6 +194,7 @@ public class Robot extends IterativeRobot {
 	
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
+		oi.checkForAxisButtons();
 	}
 
 	

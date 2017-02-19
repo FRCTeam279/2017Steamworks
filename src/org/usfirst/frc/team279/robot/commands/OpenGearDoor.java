@@ -4,38 +4,40 @@ import org.usfirst.frc.team279.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-/**
- *
- */
-public class TempShoot extends Command {
 
-    public TempShoot() {
-        requires(Robot.shooter);
+public class OpenGearDoor extends Command {
+
+    public OpenGearDoor() {
+        requires(Robot.geargizmo);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.shooter.resetDefaultPIDValues();
+    	Robot.geargizmo.resetCloseSwitch();
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.shooter.shootRPM(10500);
+    	Robot.geargizmo.openDoor();
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return false;
+        if(Robot.geargizmo.getOpenCount()){
+        	return true;
+        } else {
+        	return false;
+        }
     }
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.shooter.stopShooter();
+    	Robot.geargizmo.stopDoor();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	Robot.shooter.stopShooter();
+    	Robot.geargizmo.stopDoor();
     }
 }
