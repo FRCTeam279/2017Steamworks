@@ -56,8 +56,19 @@ public class OI {
 	//--------------------------------------------------------------------------
 	// Buttons 
 	//--------------------------------------------------------------------------
-	private JoystickButton resetGyroBtn = new JoystickButton(rightDriverStick, 2);
+	//driver buttons
+	private JoystickButton resetGyroBtn;
 	
+	//go buttons
+	private JoystickButton harvForwardBtn;
+	private JoystickButton harvStopBtn;
+	private JoystickButton harvBackwardBtn;
+	private JoystickButton shootBtn;
+	private JoystickButton stopShootBtn;
+	private JoystickButton feedBtn;
+	private JoystickButton feedReverseBtn;
+	private JoystickButton stopFeedBtn;
+	private JoystickButton eStop;
 	
 	
 	
@@ -92,9 +103,36 @@ public class OI {
 			System.out.println("OI: Error instantiating goController: " + e.getMessage());
 		}
 		
-
-
+		//Drivers Buttons
+		resetGyroBtn = new JoystickButton(rightDriverStick, 2);
+		
+		//GO Buttons
+		harvForwardBtn = new JoystickButton(goController, 1);
+		harvStopBtn = new JoystickButton(goController, 3);
+		harvBackwardBtn = new JoystickButton(goController, 4);
+		shootBtn = new JoystickButton(goController, 9);
+		//stopShootBtn = new JoystickButton(goController, 4);
+		feedBtn = new JoystickButton(goController, 10);
+		//feedReverseBtn = new JoystickButton(goController, 4);
+		//stopFeedBtn = new JoystickButton(goController, 4);
+		eStop = new JoystickButton(goController, 2);
+		
+		
+		//Applying buttons to commands
 		resetGyroBtn.whenPressed(new ResetGyro());
+		
+		harvForwardBtn.whenPressed(new RunHarvelatorFWD());
+		harvBackwardBtn.whenPressed(new RunHarvelatorRWD());
+		harvStopBtn.whenPressed(new StopHarvelator());
+		
+		shootBtn.whenPressed(new TempShoot());
+		//stopShootBtn.whenPressed(new StopShooter());
+		
+		feedBtn.whenPressed(new Feed());
+		//feedReverseBtn.whenPressed(new FeedReverse());
+		//stopFeedBtn.whenPressed(new StopFeed());
+		
+		eStop.whenPressed(new EStop());
 		
 		
 		

@@ -130,7 +130,7 @@ public class MecanumDrive extends Subsystem {
 	}
 
 	
-	public void init(){
+	public void init() throws RuntimeException {
 		System.out.println("MD: MechenumDrive Init Starting");
 		
 		loadPrefs();

@@ -48,7 +48,11 @@ public class Robot extends IterativeRobot {
 	//--------------------------------------------------------------------------
 	
 	public static final MecanumDrive mecanumDrive = new MecanumDrive();
-	public static final Ultrasonics ultrasonics = new Ultrasonics();
+	public static final Ultrasonics  ultrasonics  = new Ultrasonics();
+	public static final Harvelator   harvelator   = new Harvelator();
+	public static final Shooter      shooter      = new Shooter();
+	public static final Feeder       feeder       = new Feeder();
+	
 	public static OI oi;
 	
 	public static NetworkTable boilerTable;
@@ -56,7 +60,6 @@ public class Robot extends IterativeRobot {
 	
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
-
 	
 	
 	public void loadPrefs(){
@@ -67,28 +70,67 @@ public class Robot extends IterativeRobot {
 	
 
 	public void robotInit() {
-		
-		//Setup Tables for Vision
-		NetworkTable.initialize();
-		boilerTable = NetworkTable.getTable("Boiler");
-		gearTable   = NetworkTable.getTable("Gear");
 				
-		Robot.mecanumDrive.init();
-		Robot.ultrasonics.init();
+		//Subsystem Init's -- Start
+		try {
+			Robot.mecanumDrive.init();
+		} catch(RuntimeException e) {
+			DriverStation.reportError("Robot: Error instantiating MecanumDrive:  " + e.getMessage(), true);
+		}
+		
+		try {
+			Robot.shooter.init();
+		} catch(RuntimeException e) {
+			DriverStation.reportError("Robot: Error instantiating Shooter:  " + e.getMessage(), true);
+		}
+		
+		try {
+			Robot.feeder.init();
+		} catch(RuntimeException e) {
+			DriverStation.reportError("Robot: Error instantiating Feeder:  " + e.getMessage(), true);
+		}
+		
+		try {
+			Robot.ultrasonics.init();
+		} catch(RuntimeException e) {
+			DriverStation.reportError("Robot: Error instantiating Ultrasonics:  " + e.getMessage(), true);
+		}
+		
+//		try {
+//			Robot.geargizmo.init();
+//		} catch(RuntimeException e) {
+//			DriverStation.reportError("Robot: Error instantiating GearGizmo:  " + e.getMessage(), true);
+//		}
+		
+		try {
+			Robot.harvelator.init();
+		} catch(RuntimeException e) {
+			DriverStation.reportError("Robot: Error instantiating Harvelator:  " + e.getMessage(), true);
+		}
+		//Subsystem Init's -- End
+		
+		
+		try {
+			//Setup Tables for Vision
+			NetworkTable.initialize();
+			boilerTable = NetworkTable.getTable("Boiler");
+			gearTable   = NetworkTable.getTable("Gear");
+		} catch(Exception e) {
+			DriverStation.reportError("Robot: Error instantiating NetworkTables:  " + e.getMessage(), true);
+		}
 		
 		oi = new OI();
 		oi.init();
 	
+		
 		Robot.getAhrs().setAngleAdjustment(ahrsGyroAdjustment);
 		
 		chooser.addDefault("Default Auto", new DefaultAuto());
 		//chooser.addObject("Rotate Angle Degrees", new RotateAngleDegrees(45.0, 0.3));
 		//chooser.addObject("AutoDriveForward", new AutoDriveFoward());
-		SmartDashboard.putData("Auto mode", chooser);
+		SmartDashboard.putData("Auto mode", chooser);		
 		
-		
-		
-		//SmartDashboard.putData("Save Config",new SaveConfig());
+		SmartDashboard.putData("Save Config",new SaveConfig());
 	}
 
 	

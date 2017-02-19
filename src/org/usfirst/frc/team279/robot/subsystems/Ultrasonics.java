@@ -36,7 +36,7 @@ public class Ultrasonics extends Subsystem {
 	}
 
 	
-	public void init(){
+	public void init() throws RuntimeException{
 		System.out.println("US: Ultrasonics Init Starting");
 		
 		loadPrefs();
