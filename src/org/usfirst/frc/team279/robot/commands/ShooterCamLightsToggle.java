@@ -24,10 +24,10 @@ public class ShooterCamLightsToggle extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	if(Robot.camLightShooter.getRelay().get() == Value.kOn) {
+    	if(Robot.camLightShooter.getRelay().get() != Value.kOff) {
     		Robot.camLightShooter.getRelay().set(Value.kOff);
     	} else {
-    		Robot.camLightShooter.getRelay().set(Value.kOn);
+    		Robot.camLightShooter.getRelay().set(Value.kForward);
     	}
     }
 
