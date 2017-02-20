@@ -14,8 +14,9 @@ public class GearGizmo extends Subsystem {
 
 	private int doorMotorPort = 4;
 
-	private int openDoorSwitchPort = 7;
-	private int closeDoorSwitchPort = 6;
+	private int openDoorSwitchPort = 20;
+	private int closeDoorSwitchPort = 19;
+	private int gearPosSwitchPort = 18;
 
 	private Talon doorMotor;
 	private double doorSpeed = 0;
@@ -30,13 +31,14 @@ public class GearGizmo extends Subsystem {
 		return closeDoorSwitch;
 	}
 	
-	private DigitalInput gearPositionSwitch;
+	private DigitalInput gearPosSwitch;
 	public DigitalInput getGearPositionSwitch(){
-		return gearPositionSwitch;
+		return gearPosSwitch;
 	}
 	
 	private Counter openDoorCounter;
 	private Counter closeDoorCounter;
+	private Counter gearPosCounter;
 	
 	private boolean invertDoorMotor = false;
 
@@ -61,6 +63,10 @@ public class GearGizmo extends Subsystem {
 		closeDoorSwitch = new DigitalInput(closeDoorSwitchPort);
 		closeDoorCounter = new Counter(closeDoorSwitch);
 		System.out.println("GG: Limit Switches Setup");
+		
+		gearPosSwitch = new DigitalInput(gearPosSwitchPort);
+		gearPosCounter = new Counter(gearPosSwitch);
+		System.out.println("GG: Photo Eye Setup");
 	}
 	
 	public void loadPrefs() {
@@ -70,17 +76,22 @@ public class GearGizmo extends Subsystem {
 		doorMotorPort          = c.load(prefPrefix + "doorMotorPort", doorMotorPort);
 		openDoorSwitchPort     = c.load(prefPrefix + "openDoorSwitchPort", openDoorSwitchPort);
 		closeDoorSwitchPort    = c.load(prefPrefix + "closeDoorSwitchPort", closeDoorSwitchPort);
+		gearPosSwitchPort      = c.load(prefPrefix + "gearPosSwitchPort", gearPosSwitchPort);
 		invertDoorMotor        = c.load(prefPrefix + "invertDoorMotor", invertDoorMotor);
 	}
 	
 	
 	//***DOOR MOTOR************************************************
 	public void openDoor() {
-		doorMotor.set(doorSpeed);
+		if(closeDoorSwitch.get()){
+			doorMotor.set(doorSpeed);
+		}
 	}
 	
 	public void closeDoor () {
-		doorMotor.set(-doorSpeed);
+		if(openDoorSwitch.get()){
+			doorMotor.set(-doorSpeed);
+		}
 	}
 	
 	public void stopDoor() {
@@ -97,12 +108,20 @@ public class GearGizmo extends Subsystem {
 		return closeDoorCounter.get() > 0;
 	}
 	
+	public boolean getGearPosCount() {
+		return gearPosCounter.get() > 0;
+	}
+	
 	public void resetOpenSwitch() {
 		openDoorCounter.reset();
 	}
 	
 	public void resetCloseSwitch() {
 		closeDoorCounter.reset();
+	}
+	
+	public void resetGearPosSwitch() {
+		gearPosCounter.reset();
 	}
 	
 	

@@ -114,8 +114,8 @@ public class OI {
 		harvBackwardBtn = new JoystickButton(goController, 4);
 		feedBtn = new JoystickButton(goController, 3);
 		feedReverseBtn = new JoystickButton(goController, 2);
-		openGearBtn = new JoystickButton(goController, 7);
-		closeGearBtn = new JoystickButton(goController, 8);
+		openGearBtn = new JoystickButton(goController, 8);
+		closeGearBtn = new JoystickButton(goController, 7);
 		autoGearBtn = new JoystickButton(goController, 5);
 		
 		

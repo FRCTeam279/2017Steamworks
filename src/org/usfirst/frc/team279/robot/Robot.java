@@ -142,14 +142,18 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("DriveEnc Execute LFEnc", new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront()));
 		SmartDashboard.putData("DriveEnc Execute RFEnc", new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderRightFront()));
 		
-		
+		//** AUTO CHOOSER **************************************
 		chooser.addDefault("Default Auto", new DefaultAuto());
 		chooser.addObject("Middle Gear", new AutoMiddleGear());
 		chooser.addObject("Left Gear", new AutoLeftGear());
 		chooser.addObject("Right Gear", new AutoRightGear());
-		SmartDashboard.putData("Stupid Ass Chooser", chooser);		
+		chooser.addObject("Drive Past Line", new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront(), 0, -1146.5, 0.00035, 0, 0, 20, 0.25, 1.0, -10000, 10000));
+		SmartDashboard.putData("Auto Chooser", chooser);		
+		
 		
 		SmartDashboard.putData("Save Config",new SaveConfig());
+		SmartDashboard.putData("Reset Photo Eye", new QuickResetPE());
+		SmartDashboard.putData("Reset Switches", new ResetGearSwitches());
 	}
 
 	
@@ -160,8 +164,11 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("LR Encoder Val", mecanumDrive.getEncoderLeftRear().get());
 		SmartDashboard.putNumber("RF Encoder Val", mecanumDrive.getEncoderRightFront().get());
 		SmartDashboard.putNumber("RR Encoder Val", mecanumDrive.getEncoderRightRear().get());
-//		SmartDashboard.putBoolean("LS Open", geargizmo.getOpenCount());
-//		SmartDashboard.putBoolean("LS Close", geargizmo.getCloseCount());
+		SmartDashboard.putBoolean("LS Open", geargizmo.getOpenDoorSwitch().get());
+		SmartDashboard.putBoolean("LS Close", geargizmo.getCloseDoorSwitch().get());
+		SmartDashboard.putBoolean("LS Open2", geargizmo.getOpenCount());
+		SmartDashboard.putBoolean("LS Close2", geargizmo.getCloseCount());
+		SmartDashboard.putBoolean("Photo Eye", geargizmo.getGearPosCount());
 	}
 	
 
