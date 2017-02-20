@@ -152,8 +152,7 @@ public class Robot extends IterativeRobot {
 		
 		
 		SmartDashboard.putData("Save Config",new SaveConfig());
-		SmartDashboard.putData("Reset Photo Eye", new QuickResetPE());
-		SmartDashboard.putData("Reset Switches", new ResetGearSwitches());
+		
 	}
 
 	
