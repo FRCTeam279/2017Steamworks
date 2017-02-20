@@ -53,6 +53,7 @@ public class Robot extends IterativeRobot {
 	public static final Shooter      shooter      = new Shooter();
 	public static final Feeder       feeder       = new Feeder();
 	public static final GearGizmo    geargizmo    = new GearGizmo();
+	public static final CamLightsShooter camLightShooter = new CamLightsShooter();
 	
 	public static OI oi;
 	
