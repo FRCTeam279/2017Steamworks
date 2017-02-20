@@ -47,13 +47,14 @@ public class Robot extends IterativeRobot {
 	
 	//--------------------------------------------------------------------------
 	
-	public static final MecanumDrive mecanumDrive = new MecanumDrive();
-	public static final Ultrasonics  ultrasonics  = new Ultrasonics();
-	public static final Harvelator   harvelator   = new Harvelator();
-	public static final Shooter      shooter      = new Shooter();
-	public static final Feeder       feeder       = new Feeder();
-	public static final GearGizmo    geargizmo    = new GearGizmo();
+	public static final MecanumDrive 	mecanumDrive = new MecanumDrive();
+	public static final Ultrasonics  	ultrasonics  = new Ultrasonics();
+	public static final Harvelator   	harvelator   = new Harvelator();
+	public static final Shooter      	shooter      = new Shooter();
+	public static final Feeder       	feeder       = new Feeder();
+	public static final GearGizmo    	geargizmo    = new GearGizmo();
 	public static final CamLightsShooter camLightShooter = new CamLightsShooter();
+	public static final CamLightsGear 	camLightsGear = new CamLightsGear();
 	
 	public static OI oi;
 	
