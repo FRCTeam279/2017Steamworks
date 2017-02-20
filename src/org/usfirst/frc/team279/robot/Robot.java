@@ -114,6 +114,14 @@ public class Robot extends IterativeRobot {
 		
 		
 		try {
+			camLightsGear.init();
+		} catch(RuntimeException e) {
+			DriverStation.reportError("Robot: Error instantiating Gear Lights:  " + e.getMessage(), true);
+		}
+		
+		
+		
+		try {
 			//Setup Tables for Vision
 			NetworkTable.initialize();
 			boilerTable = NetworkTable.getTable("Boiler");
@@ -125,6 +133,9 @@ public class Robot extends IterativeRobot {
 		oi = new OI();
 		oi.init();
 	
+		//the subsystem is set to have the two ultrasonics disabled to start.. we can start the thread and then just enable them 
+		// sensors when desired
+		ultrasonics.startUltrasonics();
 		
 		Robot.getAhrs().setAngleAdjustment(ahrsGyroAdjustment);
 		
@@ -156,6 +167,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Save Config",new SaveConfig());
 		
 		SmartDashboard.putData("Toggle Shooter Lights",new ShooterCamLightsToggle());
+		SmartDashboard.putData("GearLightLow Toggle", new GearCamLightToggleLow());
+		SmartDashboard.putData("GearLightHigh Toggle", new GearCamLightToggleHigh());
 		
 	}
 
