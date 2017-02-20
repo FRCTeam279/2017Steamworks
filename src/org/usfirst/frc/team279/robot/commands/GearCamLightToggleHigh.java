@@ -12,7 +12,7 @@ public class GearCamLightToggleHigh extends Command {
 
     public GearCamLightToggleHigh() {
     	super("GearCamLightToggleHigh");
-        requires(Robot.mecanumDrive);
+        requires(Robot.camLightsGear);
         this.setInterruptible(true);
         this.setRunWhenDisabled(true);
     }
