@@ -3,12 +3,13 @@ package org.usfirst.frc.team279.robot.commands;
 import org.usfirst.frc.team279.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
  */
 public class TempShoot extends Command {
-
+	private int i = 0;
     public TempShoot() {
         requires(Robot.shooter);
     }
@@ -20,7 +21,13 @@ public class TempShoot extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.shooter.shootRPM(11000);
+    	//Robot.shooter.shootRPM(11000);
+    	Robot.shooter.shootRPM(SmartDashboard.getNumber("Shooter RPM Target", 10000));
+    	
+    	i++;
+    	if(i > 50) {
+    		System.out.println("CMD TempShoot: Target " + SmartDashboard.getNumber("Shooter RPM Target") + ", Current: " + Robot.shooter.getShooterController().getSpeed());
+    	}
     }
 
     // Make this return true when this Command no longer needs to run execute()

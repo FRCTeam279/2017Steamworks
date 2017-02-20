@@ -15,7 +15,7 @@ public class ShooterCamLightsToggle extends Command {
         requires(Robot.mecanumDrive);
         
         this.setInterruptible(true);
-        this.setRunWhenDisabled(true);
+        this.setRunWhenDisabled(false);
     }
 
     // Called just before this Command runs the first time

@@ -43,14 +43,14 @@ public class Shooter extends Subsystem {
 	private double  degTwoSpeedMin    = 0.0;
 	
 	//Shooter PID Values
-	private double  p             = 0.0;
+	private double  p             = 0.025;
 	private double  i             = 0.0;
-	private double  d             = 0.0;
-	private double  f             = 0.0;
-	private double  dP            = 0.0;
+	private double  d             = 0.00025;
+	private double  f             = 0.085;
+	private double  dP            = 0.025;
 	private double  dI            = 0.0;
-	private double  dD            = 0.0;
-	private double  dF            = 0.0;
+	private double  dD            = 0.00025;
+	private double  dF            = 0.0085;
 	
 	//Shooter CANTalon with getter
 	private CANTalon shooterMotor = null;
@@ -198,7 +198,7 @@ public class Shooter extends Subsystem {
      * @param rpm Speed in Revolutions Per Minute
      */
     public void shootRPM(double rpm) {
-    	resetPID();
+    	//resetPID();
     	
     	//prevent errors
     	if(rpm > maxShooterMotorRPM) { rpm = maxShooterMotorRPM; }
