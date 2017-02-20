@@ -154,6 +154,8 @@ public class Robot extends IterativeRobot {
 		
 		SmartDashboard.putData("Save Config",new SaveConfig());
 		
+		SmartDashboard.putData("Toggle Shooter Lights",new ShooterCamLightsToggle());
+		
 	}
 
 	
