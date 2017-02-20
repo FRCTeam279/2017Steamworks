@@ -155,6 +155,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("DriveEnc Execute LFEnc", new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront()));
 		SmartDashboard.putData("DriveEnc Execute RFEnc", new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderRightFront()));
 		
+		
+		
 		//** AUTO CHOOSER **************************************
 		chooser.addDefault("Default Auto", new DefaultAuto());
 		chooser.addObject("Middle Gear", new AutoMiddleGear());
@@ -184,7 +186,11 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putBoolean("LS Close", geargizmo.getCloseDoorSwitch().get());
 		SmartDashboard.putBoolean("LS Open2", geargizmo.getOpenCount());
 		SmartDashboard.putBoolean("LS Close2", geargizmo.getCloseCount());
-		SmartDashboard.putBoolean("Photo Eye", geargizmo.getGearPosCount());
+		
+		
+		//Permanent
+		SmartDashboard.putBoolean("GearVertical", Robot.geargizmo.getGearPositionSwitch().get());
+		SmartDashboard.putNumber("Shooter Range (Ultra Inches)", Robot.ultrasonics.getUltrasonics().getDistanceInches("rangeShooter"));
 	}
 	
 

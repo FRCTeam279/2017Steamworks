@@ -19,7 +19,10 @@ public class Ultrasonics extends Subsystem {
 	}
 
 	private boolean enabled = false;
-		
+	
+	private int rangeShooterTrig = 9;
+	private int rangeShooterEcho = 8;
+	
 	private int rangeGearLeftTrig = 11;
 	private int rangeGearLeftEcho = 10;
 	private int rangeGearRightTrig = 13;
@@ -33,6 +36,9 @@ public class Ultrasonics extends Subsystem {
 		rangeGearLeftEcho = c.load(prefPrefix + "rangeGearLeftEcho", rangeGearLeftEcho);
 		rangeGearRightTrig = c.load(prefPrefix + "rangeGearRightTrig", rangeGearRightTrig);
 		rangeGearRightEcho = c.load(prefPrefix + "rangeGearRightEcho", rangeGearRightEcho);
+		
+		rangeShooterTrig = c.load(prefPrefix + "rangeShooterTrig", rangeShooterTrig);
+		rangeShooterEcho = c.load(prefPrefix + "rangeShooterEcho", rangeShooterEcho);
 	}
 
 	
@@ -44,8 +50,11 @@ public class Ultrasonics extends Subsystem {
 		
 		ug.addUltrasonic("rangeGearLeft", rangeGearLeftTrig, rangeGearLeftEcho);
 		ug.addUltrasonic("rangeGearRight", rangeGearRightTrig, rangeGearRightEcho);
+		ug.addUltrasonic("rangeShooter",rangeShooterTrig, rangeShooterEcho);
 		//ug.enableUltrasonic("rangeGearLeft");
 		//ug.enableUltrasonic("rangeGearRight");
+		ug.enableUltrasonic("rangeShooter");
+		
 		ug.disableUltrasonic("rangeGearLeft");
 		ug.disableUltrasonic("rangeGearRight");
 		System.out.println("US: Ultrasonics Init Complete");	

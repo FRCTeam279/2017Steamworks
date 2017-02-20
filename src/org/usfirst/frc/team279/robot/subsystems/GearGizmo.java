@@ -31,6 +31,7 @@ public class GearGizmo extends Subsystem {
 		return closeDoorSwitch;
 	}
 	
+	private boolean savedGearPos = false;
 	private DigitalInput gearPosSwitch;
 	public DigitalInput getGearPositionSwitch(){
 		return gearPosSwitch;
@@ -38,7 +39,6 @@ public class GearGizmo extends Subsystem {
 	
 	private Counter openDoorCounter;
 	private Counter closeDoorCounter;
-	private Counter gearPosCounter;
 	
 	private boolean invertDoorMotor = false;
 
@@ -65,7 +65,6 @@ public class GearGizmo extends Subsystem {
 		System.out.println("GG: Limit Switches Setup");
 		
 		gearPosSwitch = new DigitalInput(gearPosSwitchPort);
-		gearPosCounter = new Counter(gearPosSwitch);
 		System.out.println("GG: Photo Eye Setup");
 	}
 	
@@ -107,10 +106,7 @@ public class GearGizmo extends Subsystem {
 	public boolean getCloseCount() {
 		return closeDoorCounter.get() > 0;
 	}
-	
-	public boolean getGearPosCount() {
-		return gearPosCounter.get() > 0;
-	}
+
 	
 	public void resetOpenSwitch() {
 		openDoorCounter.reset();
@@ -120,8 +116,8 @@ public class GearGizmo extends Subsystem {
 		closeDoorCounter.reset();
 	}
 	
-	public void resetGearPosSwitch() {
-		gearPosCounter.reset();
+	public void saveGearPos() {
+		savedGearPos = gearPosSwitch.get();
 	}
 	
 	
