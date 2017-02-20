@@ -10,8 +10,8 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class AutoRightGear extends CommandGroup {
 
     public AutoRightGear() {
-    	addSequential(new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront(), 0, -744, 0.00035, 0, 0, 20, 0.15, 1.0, -10000, 10000));
-    	addSequential(new YawPID(-45, 0.00035, 0, 0, 5, .2));
+    	addSequential(new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront(), 0, -744, 0.001, 0, 0, 20, 0.2, 1.0, -10000, 10000));
+    	addSequential(new YawPID(-145, 0.008, 0, 0, 2, .2));
     	//stuff here for placing the gear
     }
 }
