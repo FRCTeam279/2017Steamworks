@@ -110,19 +110,17 @@ public class Robot extends IterativeRobot {
 		} catch(RuntimeException e) {
 			DriverStation.reportError("Robot: Error instantiating Harvelator:  " + e.getMessage(), true);
 		}
-		//Subsystem Init's -- End
-		
 		
 		try {
 			camLightsGear.init();
 		} catch(RuntimeException e) {
 			DriverStation.reportError("Robot: Error instantiating Gear Lights:  " + e.getMessage(), true);
 		}
+		//Subsystem Init's -- End
 		
 		
-		
+		//Setup Tables for Vision
 		try {
-			//Setup Tables for Vision
 			NetworkTable.initialize();
 			boilerTable = NetworkTable.getTable("Boiler");
 			gearTable   = NetworkTable.getTable("Gear");
@@ -172,6 +170,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("GearLightLow Toggle", new GearCamLightToggleLow());
 		SmartDashboard.putData("GearLightHigh Toggle", new GearCamLightToggleHigh());
 		
+		SmartDashboard.putData("Gear Open", new OpenGearDoor());
+		SmartDashboard.putData("Gear Close", new CloseGearDoor());
 	}
 
 	
@@ -191,6 +191,8 @@ public class Robot extends IterativeRobot {
 		//Permanent
 		SmartDashboard.putBoolean("GearVertical", Robot.geargizmo.getGearPositionSwitch().get());
 		SmartDashboard.putNumber("Shooter Range (Ultra Inches)", Robot.ultrasonics.getUltrasonics().getDistanceInches("rangeShooter"));
+		SmartDashboard.putNumber("Gear Range Left", Robot.ultrasonics.getUltrasonics().getDistanceInches("rangeGearLeft"));
+		SmartDashboard.putNumber("Gear Range Right", Robot.ultrasonics.getUltrasonics().getDistanceInches("rangeGearRight"));
 	}
 	
 

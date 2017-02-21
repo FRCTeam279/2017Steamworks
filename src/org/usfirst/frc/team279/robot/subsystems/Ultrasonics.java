@@ -51,12 +51,12 @@ public class Ultrasonics extends Subsystem {
 		ug.addUltrasonic("rangeGearLeft", rangeGearLeftTrig, rangeGearLeftEcho);
 		ug.addUltrasonic("rangeGearRight", rangeGearRightTrig, rangeGearRightEcho);
 		ug.addUltrasonic("rangeShooter",rangeShooterTrig, rangeShooterEcho);
-		//ug.enableUltrasonic("rangeGearLeft");
-		//ug.enableUltrasonic("rangeGearRight");
+		ug.enableUltrasonic("rangeGearLeft");
+		ug.enableUltrasonic("rangeGearRight");
 		ug.enableUltrasonic("rangeShooter");
 		
-		ug.disableUltrasonic("rangeGearLeft");
-		ug.disableUltrasonic("rangeGearRight");
+		//ug.disableUltrasonic("rangeGearLeft");
+		//ug.disableUltrasonic("rangeGearRight");
 		System.out.println("US: Ultrasonics Init Complete");	
 	}
 	

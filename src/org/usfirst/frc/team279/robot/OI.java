@@ -60,6 +60,8 @@ public class OI {
 	//--------------------------------------------------------------------------
 	//driver buttons
 	private JoystickButton resetGyroBtn;
+	public JoystickButton slowSpeedBtn;
+	private JoystickButton gearSaveBtn;
 	
 	//go buttons
 	private JoystickButton harvForwardBtn;
@@ -106,6 +108,8 @@ public class OI {
 		
 		//Drivers Buttons
 		resetGyroBtn = new JoystickButton(rightDriverStick, 2);
+		slowSpeedBtn = new JoystickButton(rightDriverStick, 1);
+		gearSaveBtn = new JoystickButton(leftDriverStick, 1);
 		
 		//GO Buttons
 		shootBtn = 0.75;
@@ -121,6 +125,8 @@ public class OI {
 		
 		//Applying buttons to commands
 		resetGyroBtn.whenPressed(new ResetGyro());
+		
+		gearSaveBtn.whenPressed(new GearPosSave());
 		
 		harvForwardBtn.whenPressed(new RunHarvelatorFWD());
 		harvForwardBtn.whenReleased(new StopHarvelator());

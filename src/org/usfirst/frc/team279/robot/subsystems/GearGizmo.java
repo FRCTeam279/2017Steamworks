@@ -19,7 +19,7 @@ public class GearGizmo extends Subsystem {
 	private int gearPosSwitchPort = 18;
 
 	private Talon doorMotor;
-	private double doorSpeed = 0;
+	private double doorSpeed = 0.25;
 	
 	private DigitalInput openDoorSwitch;
 	public DigitalInput getOpenDoorSwitch() {
@@ -70,7 +70,6 @@ public class GearGizmo extends Subsystem {
 	
 	public void loadPrefs() {
 		Config c = new Config();
-		
 		doorSpeed              = c.load(prefPrefix + "doorSpeed", doorSpeed);
 		doorMotorPort          = c.load(prefPrefix + "doorMotorPort", doorMotorPort);
 		openDoorSwitchPort     = c.load(prefPrefix + "openDoorSwitchPort", openDoorSwitchPort);
@@ -82,13 +81,13 @@ public class GearGizmo extends Subsystem {
 	
 	//***DOOR MOTOR************************************************
 	public void openDoor() {
-		if(closeDoorSwitch.get()){
+		if(!getOpenCount()){
 			doorMotor.set(doorSpeed);
 		}
 	}
 	
 	public void closeDoor () {
-		if(openDoorSwitch.get()){
+		if(!getCloseCount()){
 			doorMotor.set(-doorSpeed);
 		}
 	}
@@ -119,12 +118,6 @@ public class GearGizmo extends Subsystem {
 	public void saveGearPos() {
 		savedGearPos = gearPosSwitch.get();
 	}
-	
-	
-	//***ESTOP*****************************************************
-	public void stopAll() {
-		stopDoor();
-	}	
 	
 //*** VISION GETTER'S ********************************************
     

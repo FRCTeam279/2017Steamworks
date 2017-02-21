@@ -66,6 +66,11 @@ public class MecDriveTeleopDefaultFPS extends Command {
     	double x = leftJoystick.getX();
     	double z = rightJoystick.getX();
     	
+    	if(Robot.oi.slowSpeedBtn.get()) {
+    		y = y/2;
+    		x = x/2;
+    	}
+    	
     	x = Robot.oi.filterInput(x, Robot.oi.getLeftStickNullZone(), 1);
     	y = Robot.oi.filterInput(y, Robot.oi.getLeftStickNullZone(), 1);
     	z = Robot.oi.filterInput(z, Robot.oi.getRightStickNullZone(), 1);

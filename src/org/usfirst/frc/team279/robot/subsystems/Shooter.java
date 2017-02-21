@@ -17,7 +17,7 @@ public class Shooter extends Subsystem {
 	/*
 	 * Note:
 	 * > Encoder is between the motor and the gearbox (measures direct motor speeds)
-	 * > Angle will now be two fixed angles which are TBD
+	 * > Angle will now be two fixed angles which are 10 and 15 degrees
 	 * > 
 	 */
 	
@@ -43,10 +43,6 @@ public class Shooter extends Subsystem {
 	private double  degTwoSpeedMin    = 0.0;
 	
 	//Shooter PID Values
-	private double  p             = 0.025;
-	private double  i             = 0.0;
-	private double  d             = 0.00025;
-	private double  f             = 0.085;
 	private double  dP            = 0.025;
 	private double  dI            = 0.0;
 	private double  dD            = 0.00025;
@@ -108,10 +104,10 @@ public class Shooter extends Subsystem {
 		invertShooter = c.load(prefPrefix + "invertShooter", invertShooter);
 		invertEncoder = c.load(prefPrefix + "invertEncoder", invertEncoder);
 		
-		dP            = c.load(prefPrefix + "defaultP", dP);
-		dI            = c.load(prefPrefix + "defaultI", dI);
-		dD            = c.load(prefPrefix + "defaultD", dD);
-		dF            = c.load(prefPrefix + "defaultF", dF);
+		dP = c.load(prefPrefix + "defaultP", dP);
+		dI = c.load(prefPrefix + "defaultI", dI);
+		dD = c.load(prefPrefix + "defaultD", dD);
+		dF = c.load(prefPrefix + "defaultF", dF);
 		
 		degOne        = c.load(prefPrefix + "degreeOne", degOne);
 		degTwo        = c.load(prefPrefix + "degreeTwo", degTwo);
@@ -143,52 +139,27 @@ public class Shooter extends Subsystem {
     	shooterMotor.configPeakOutputVoltage(+12.0f, -12.0f);
     	
     	//Setup PID
-    	resetDefaultPIDValues();
     	resetPID();
     	
     	//Other Setup
     	shooterMotor.enableBrakeMode(false);
     	shooterMotor.reverseOutput(invertShooter);
-    }    
+    }
     
     
     
     //*** SHOOTER MOTOR **********************************************
-    
-    /**
-     * Sets a new default PID Value
-     * @param p Proportional
-     * @param i Integral
-     * @param d Derivative
-     * @param f Feed
-     */
-    public void setDefaultPIDValues(double p, double i, double d, double f) {
-    	this.p = p;
-    	this.i = i;
-    	this.d = d;
-    	this.f = f;
-    }
-    
-    
-    /**
-     * Resets PID default values to the values received from prefs
-     */
-    public void resetDefaultPIDValues() {
-    	p = dP;
-    	i = dI;
-    	d = dD;
-    	f = dF;
-    }
     
     
     /**
      * Sets PID to the current PID default values
      */
     private void resetPID() {
-    	shooterMotor.setP(p);
-    	shooterMotor.setI(i);
-    	shooterMotor.setD(d);
-    	shooterMotor.setF(f);
+    	loadPrefs();
+    	shooterMotor.setP(dP);
+    	shooterMotor.setI(dI);
+    	shooterMotor.setD(dD);
+    	shooterMotor.setF(dF);
     }
     
     
