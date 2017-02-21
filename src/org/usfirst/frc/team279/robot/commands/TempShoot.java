@@ -25,7 +25,7 @@ public class TempShoot extends Command {
     	
     	i++;
     	if(i > 50) {
-    		System.out.println("CMD TempShoot: Target " + SmartDashboard.getNumber("Shooter RPM Target") + ", Current: " + Robot.shooter.getShooterController().getSpeed());
+    		System.out.println("CMD TempShoot: Target " + SmartDashboard.getNumber("Shooter RPM Target", 11111) + ", Current: " + Robot.shooter.getShooterController().getSpeed());
     	}
     }
 

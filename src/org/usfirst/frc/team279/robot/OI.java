@@ -145,11 +145,12 @@ public class OI {
 	}
 	
 	Command shoot = new TempShoot();
+	Command autoShoot = new Shoot();
 	Command stopShoot = new StopShooter();
 	public void checkForAxisButtons() {
 		
 		if(goController.getRawAxis(2) > shootBtn) {
-			shoot.start();
+			autoShoot.start();
 		} else if(goController.getRawAxis(3) > closeShotBtn) {
 			shoot.start();
 		} else {

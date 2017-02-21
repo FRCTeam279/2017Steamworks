@@ -258,6 +258,13 @@ public class Shooter extends Subsystem {
     		return (degTwoSpeedMax - degTwoSpeedMin) * percent;    		
     	}
     }
+    
+    
+    
+    
+    public double calcSpeedFromDistance(double inches) {
+    	return 8143.0608429742 * Math.pow(1.0070239136161, inches);
+    }
 
     
     
