@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  *
  */
-public class DriveToUltrasonicDistance extends Command implements PIDOutput, PIDSource {
+public class DriveToUltrasonicDistanceY extends Command implements PIDOutput, PIDSource {
 	private boolean useSmartDashBoardValues = false;
 	
 	private String ultrasonicKey;
@@ -32,7 +32,7 @@ public class DriveToUltrasonicDistance extends Command implements PIDOutput, PID
     
     private boolean cancel = false;
     
-    public DriveToUltrasonicDistance(String ultrasonicName) {
+    public DriveToUltrasonicDistanceY(String ultrasonicName) {
     	super("DriveToUltrasonicDistance");
         requires(Robot.mecanumDrive);
         
@@ -43,7 +43,7 @@ public class DriveToUltrasonicDistance extends Command implements PIDOutput, PID
     }
     
     
-    public DriveToUltrasonicDistance(String ultrasonicName, double target, double p, double i, double d, double tolerance) {
+    public DriveToUltrasonicDistanceY(String ultrasonicName, double target, double p, double i, double d, double tolerance) {
     	super("DriveToUltrasonicDistance");
         requires(Robot.mecanumDrive);
         
@@ -58,7 +58,7 @@ public class DriveToUltrasonicDistance extends Command implements PIDOutput, PID
         this.kTolerance = tolerance;        
     }
     
-    public DriveToUltrasonicDistance(String ultrasonicName, double target, double p, double i, double d, double tolerance, double minSpeed, double maxSpeed, double minInput, double maxInput) {
+    public DriveToUltrasonicDistanceY(String ultrasonicName, double target, double p, double i, double d, double tolerance, double minSpeed, double maxSpeed, double minInput, double maxInput) {
     	super("DriveToUltrasonicDistance");
         requires(Robot.mecanumDrive);
         

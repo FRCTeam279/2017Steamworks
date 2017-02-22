@@ -115,6 +115,9 @@ public class SquareToUltrasonics extends Command implements PIDSource, PIDOutput
 
     
     protected boolean isFinished() {
+    	if(this.cancel) {
+    		return true;
+    	}
     	return pidController.onTarget();
     }
 

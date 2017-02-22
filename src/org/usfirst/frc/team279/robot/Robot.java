@@ -154,6 +154,7 @@ public class Robot extends IterativeRobot {
 		
 		
 		
+		
 		//** AUTO CHOOSER **************************************
 		chooser.addDefault("Default Auto", new DefaultAuto());
 		chooser.addObject("Middle Gear", new AutoMiddleGear());
@@ -169,12 +170,6 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Toggle Shooter Lights",new ShooterCamLightsToggle());
 		SmartDashboard.putData("GearLightLow Toggle", new GearCamLightToggleLow());
 		SmartDashboard.putData("GearLightHigh Toggle", new GearCamLightToggleHigh());
-		
-		SmartDashboard.putData("Gear Open", new OpenGearDoor());
-		SmartDashboard.putData("Gear Close", new CloseGearDoor());
-		SmartDashboard.putData("Read Left Ultrasonic", new ReadOneUltrasonicPOC(11, 10));
-		SmartDashboard.putData("Read Right Ultrasonic", new ReadOneUltrasonicPOC(13, 12));
-		
 	}
 
 	
