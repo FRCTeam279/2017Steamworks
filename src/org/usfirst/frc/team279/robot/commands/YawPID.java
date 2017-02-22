@@ -29,8 +29,6 @@ public class YawPID extends Command implements PIDOutput {
     private double kTolerance = 0.0;
     private double minSpeed = -1.0;
     private double maxSpeed = 1.0;
-    private double minInput = 0;
-    private double maxInput = 360;
     
     private boolean cancel = false;
     
@@ -83,7 +81,7 @@ public class YawPID extends Command implements PIDOutput {
     	
     	if(useSmartDashBoardValues) {
 	    	yaw = SmartDashboard.getNumber("TurnPID Target", 0.0);
-			kP = SmartDashboard.getNumber("TurnPID P", 0.005);
+			kP = SmartDashboard.getNumber("TurnPID P", 0.01	);
 			kI = SmartDashboard.getNumber("TurnPID I", 0.00);
 			kD = SmartDashboard.getNumber("TurnPID D", 0.0);
 			minSpeed = SmartDashboard.getNumber("TurnPID MinSpeed", 0.0);
@@ -136,18 +134,17 @@ public class YawPID extends Command implements PIDOutput {
     //remember that -Y is forwards
     public void pidWrite(double output) {
     
-    	if(this.cancel){ 
-    		Robot.mecanumDrive.stop(); 
-    	} else {
-    		if(Math.abs(output) < this.minSpeed) {
-    			if(output < 1.0) {
-    				Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, 0.0, -minSpeed, 0.0);
-    			} else {
-    				Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, 0.0, minSpeed, 0.0);
-    			}
-    		} else {
-    			Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, 0.0, output, 0.0);
-    		}
-    	}
+    	if(Math.abs(output) < this.minSpeed) {
+			double tSpd = minSpeed;
+			if(output < 0.0) {
+				tSpd = minSpeed * -1.0;
+			} 
+			System.out.println("CMD YawPID: current: " + Robot.getAhrs().pidGet() + ", Output=" +  output + " minspeed=" + tSpd);
+			Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, 0.0, tSpd, 0.0);
+			
+		} else {
+			System.out.println("CMD YawPID: current: " + Robot.getAhrs().pidGet() + ",  Output=" +  output);
+			Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, 0.0, output, 0.0);
+		}
     }
 }
