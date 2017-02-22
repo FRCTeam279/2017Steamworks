@@ -160,6 +160,7 @@ public class Robot extends IterativeRobot {
 		chooser.addObject("Left Gear", new AutoLeftGear());
 		chooser.addObject("Right Gear", new AutoRightGear());
 		chooser.addObject("Drive Past Line", new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront(), 0, -1146.5, 0.00035, 0, 0, 20, 0.25, 1.0, -10000, 10000));
+		chooser.addObject("Shoot", new AutoShooting());
 		SmartDashboard.putData("Auto Chooser", chooser);		
 		
 		

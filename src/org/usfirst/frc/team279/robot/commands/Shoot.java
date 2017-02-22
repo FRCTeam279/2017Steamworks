@@ -21,6 +21,13 @@ public class Shoot extends Command {
 	private boolean useVision = true;
 	private boolean useUltra  = true;
 	
+    public Shoot(double sec) {
+        requires(Robot.shooter);
+        setInterruptible(true);
+        setRunWhenDisabled(false);
+        setTimeout(sec);
+    }
+    
     public Shoot() {
         requires(Robot.shooter);
         setInterruptible(true);
@@ -59,22 +66,26 @@ public class Shoot extends Command {
     	
     	if(useVision && useUltra) {
     		distanceT = (distanceV + distanceU)/2;
+    		System.out.println("Vision and Ultra: " + distanceT);
     	} else if(useUltra && !useVision) {
     		distanceT = distanceU;
+    		System.out.println("Ultra: " + distanceT);
     	} else if(!useUltra && useVision) {
     		distanceT = distanceV;
+    		System.out.println("Vision: " + distanceT);
     	}
     	
     	if(distanceT <= maxDistance) {
+    		SmartDashboard.putNumber("Shooter Range (Calculated Inches)", distanceT);
     		double spd = Robot.shooter.calcSpeedFromDistance(distanceT);
-    		Robot.shooter.shootRPM(spd);
+    		Robot.shooter.shootRPM(spd + 250);
     		System.out.println("Shoot CMD: Cur Spd:" + spd);
     	}
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return false;
+        return this.isTimedOut();
     }
 
     // Called once after isFinished returns true

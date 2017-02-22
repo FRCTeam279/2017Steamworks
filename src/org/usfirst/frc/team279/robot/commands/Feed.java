@@ -6,6 +6,11 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class Feed extends Command {
 
+    public Feed(double sec) {
+        requires(Robot.feeder);
+        setTimeout(sec);
+    }
+    
     public Feed() {
         requires(Robot.feeder);
     }
@@ -17,7 +22,7 @@ public class Feed extends Command {
     }
 
     protected boolean isFinished() {
-        return false;
+        return this.isTimedOut();
     }
 
     protected void end() {
