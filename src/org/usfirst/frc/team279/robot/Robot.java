@@ -94,7 +94,10 @@ public class Robot extends IterativeRobot {
 		}
 		
 		try {
+			//the subsystem is set to have the two ultrasonics disabled to start.. we can start the thread and then just enable them 
+			// sensors when desired
 			Robot.ultrasonics.init();
+			Robot.ultrasonics.startUltrasonics();
 		} catch(RuntimeException e) {
 			DriverStation.reportError("Robot: Error instantiating Ultrasonics:  " + e.getMessage(), true);
 		}
@@ -130,11 +133,7 @@ public class Robot extends IterativeRobot {
 		
 		oi = new OI();
 		oi.init();
-	
-		//the subsystem is set to have the two ultrasonics disabled to start.. we can start the thread and then just enable them 
-		// sensors when desired
-		ultrasonics.startUltrasonics();
-		
+
 		Robot.getAhrs().setAngleAdjustment(ahrsGyroAdjustment);
 		
 		SmartDashboard.putNumber("TurnPID Target", 0.0);
@@ -172,6 +171,9 @@ public class Robot extends IterativeRobot {
 		
 		SmartDashboard.putData("Gear Open", new OpenGearDoor());
 		SmartDashboard.putData("Gear Close", new CloseGearDoor());
+		SmartDashboard.putData("Read Left Ultrasonic", new ReadOneUltrasonicPOC(11, 10));
+		SmartDashboard.putData("Read Right Ultrasonic", new ReadOneUltrasonicPOC(13, 12));
+		
 	}
 
 	
@@ -180,19 +182,21 @@ public class Robot extends IterativeRobot {
 	public void robotPeriodic() {
 		SmartDashboard.putNumber("LF Encoder Val", mecanumDrive.getEncoderLeftFront().get());
 		SmartDashboard.putNumber("LR Encoder Val", mecanumDrive.getEncoderLeftRear().get());
-		SmartDashboard.putNumber("RF Encoder Val", mecanumDrive.getEncoderRightFront().get());
-		SmartDashboard.putNumber("RR Encoder Val", mecanumDrive.getEncoderRightRear().get());
-		SmartDashboard.putBoolean("LS Open", geargizmo.getOpenDoorSwitch().get());
-		SmartDashboard.putBoolean("LS Close", geargizmo.getCloseDoorSwitch().get());
-		SmartDashboard.putBoolean("LS Open2", geargizmo.getOpenCount());
-		SmartDashboard.putBoolean("LS Close2", geargizmo.getCloseCount());
+		//SmartDashboard.putNumber("RF Encoder Val", mecanumDrive.getEncoderRightFront().get());
+		//SmartDashboard.putNumber("RR Encoder Val", mecanumDrive.getEncoderRightRear().get());
+		//SmartDashboard.putBoolean("LS Open", geargizmo.getOpenDoorSwitch().get());
+		//SmartDashboard.putBoolean("LS Close", geargizmo.getCloseDoorSwitch().get());
+		//SmartDashboard.putBoolean("LS Open2", geargizmo.getOpenCount());
+		//SmartDashboard.putBoolean("LS Close2", geargizmo.getCloseCount());
 		
 		
 		//Permanent
 		SmartDashboard.putBoolean("GearVertical", Robot.geargizmo.getGearPositionSwitch().get());
 		SmartDashboard.putNumber("Shooter Range (Ultra Inches)", Robot.ultrasonics.getUltrasonics().getDistanceInches("rangeShooter"));
-		SmartDashboard.putNumber("Gear Range Left", Robot.ultrasonics.getUltrasonics().getDistanceInches("rangeGearLeft"));
-		SmartDashboard.putNumber("Gear Range Right", Robot.ultrasonics.getUltrasonics().getDistanceInches("rangeGearRight"));
+
+		SmartDashboard.putNumber("Gear Range Left", ultrasonics.getUltrasonics().getReading("rangeGearLeft").getDistanceInches());
+		SmartDashboard.putNumber("Gear Range Right", ultrasonics.getUltrasonics().getReading("rangeGearRight").getDistanceInches());
+		
 	}
 	
 

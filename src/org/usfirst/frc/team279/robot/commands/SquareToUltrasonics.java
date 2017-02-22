@@ -16,12 +16,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  *
  */
-public class YawPID extends Command implements PIDOutput {
+public class SquareToUltrasonics extends Command implements PIDOutput {
 	private boolean useSmartDashBoardValues = false;
 
 	public PIDController pidController;
-    private double yaw = 0.0;
-    private double targetHeading = 0.0;
+    private double target = 0.0;
     private double kP = 0.000;
     private double kI = 0.000;
     private double kD = 0.000;
@@ -35,8 +34,8 @@ public class YawPID extends Command implements PIDOutput {
     private boolean cancel = false;
     
     //dir is +/- 180
-    public YawPID() {
-    	super("YawPID");
+    public SquareToUltrasonics() {
+    	super("SquareToUltrasonics");
         requires(Robot.mecanumDrive);
         
         this.setInterruptible(true);
@@ -46,29 +45,29 @@ public class YawPID extends Command implements PIDOutput {
     }
     
     
-    public YawPID(double yaw, double p, double i, double d, double tolerance) {
-    	super("YawPID");
+    public SquareToUltrasonics(double target, double p, double i, double d, double tolerance) {
+    	super("SquareToUltrasonics");
         requires(Robot.mecanumDrive);
         
         this.setInterruptible(true);
         this.setRunWhenDisabled(false);
         useSmartDashBoardValues = false;
 
-        this.yaw = yaw;
+        this.target = target;
         this.kP = p;
         this.kI = i;
         this.kD = d;
         this.kTolerance = Math.abs(tolerance);        
     }
     
-    public YawPID(double yaw, double p, double i, double d, double tolerance, double minSpeed) {
+    public SquareToUltrasonics(double target, double p, double i, double d, double tolerance, double minSpeed) {
     	super("YawPID");
         requires(Robot.mecanumDrive);
         
         this.setInterruptible(true);
         this.setRunWhenDisabled(false);
         useSmartDashBoardValues = false;
-        this.yaw = yaw;
+        this.target = target;
         this.kP = p;
         this.kI = i;
         this.kD = d;
@@ -82,21 +81,21 @@ public class YawPID extends Command implements PIDOutput {
     	this.cancel = false;
     	
     	if(useSmartDashBoardValues) {
-	    	yaw = SmartDashboard.getNumber("TurnPID Target", 0.0);
+	    	target = SmartDashboard.getNumber("TurnPID Target", 0.0);
 			kP = SmartDashboard.getNumber("TurnPID P", 0.005);
 			kI = SmartDashboard.getNumber("TurnPID I", 0.00);
 			kD = SmartDashboard.getNumber("TurnPID D", 0.0);
 			minSpeed = SmartDashboard.getNumber("TurnPID MinSpeed", 0.0);
-			kTolerance = Math.abs(SmartDashboard.getNumber("TurnPID Tolerance", 10));
+			kTolerance = Math.abs(SmartDashboard.getNumber("TurnPID Tolerance", 500));
     	} 
-    	targetHeading = NavHelper.addDegrees(yaw, Robot.getAhrs().getAngle());
+
     	pidController = new PIDController(kP, kI, kD, kF, Robot.getAhrs(), this);
     	pidController.setInputRange(-180.0f, 180.0f);
     	pidController.setOutputRange(-1.0, 1.0);
-    	pidController.setContinuous(true);
+    	pidController.setContinuous(false);
     	pidController.setAbsoluteTolerance(kTolerance);
-        pidController.setSetpoint(yaw);
-        System.out.println("CMD YawPID: Starting - target: " + yaw + ", current: " + Robot.getAhrs().pidGet());
+        pidController.setSetpoint(target);
+        System.out.println("CMD YawPID: Starting - target: " + target + ", current: " + Robot.getAhrs().pidGet());
     }
 
    
@@ -116,7 +115,7 @@ public class YawPID extends Command implements PIDOutput {
 
     
     protected void end() {
-    	System.out.println("CMD YawPID: Ended - target: " + yaw + ", current: " + Robot.getAhrs().pidGet());
+    	System.out.println("CMD YawPID: Ended - target: " + target + ", current: " + Robot.getAhrs().pidGet());
     	Robot.mecanumDrive.stop();
     	pidController.disable();
     	pidController = null;
@@ -125,7 +124,7 @@ public class YawPID extends Command implements PIDOutput {
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	System.out.println("CMD YawPID: Interrupted - target: " + yaw + ", current: " + Robot.getAhrs().pidGet());
+    	System.out.println("CMD YawPID: Interrupted - target: " + target + ", current: " + Robot.getAhrs().pidGet());
     	Robot.mecanumDrive.stop();
     	pidController.disable();
     	pidController = null;

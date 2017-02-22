@@ -12,18 +12,10 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class UltrasonicsGroup {
 	//https://en.wikipedia.org/wiki/Speed_of_sound
-//	public static final double SPEED_OF_SOUND_MPS = 343.21;	 						//meters per second
-//	public static final double SPEED_OF_SOUND_MMPS = SPEED_OF_SOUND_MPS * 1000;	 	//meters per second
-//	public static final double SPEED_OF_SOUND_FPS = 1126.017;						//feet per second	
-//	public static final double SPEED_OF_SOUND_IPS = 1126.017 * 12;					//inches per second
-//	
-	
-	
 	public static final double SPEED_OF_SOUND_MPS = 343.21;	 						//meters per second
 	public static final double SPEED_OF_SOUND_MMPS = SPEED_OF_SOUND_MPS * 1000;	 	//meters per second
 	public static final double SPEED_OF_SOUND_FPS = 1126.017;						//feet per second	
-	public static final double SPEED_OF_SOUND_IPS = SPEED_OF_SOUND_FPS * 12;		//inches per second
-	
+	public static final double SPEED_OF_SOUND_IPS = 1126.017 * 12;					//inches per second
 	
 	private double pingTime = 10 * 1e-6;
 	
