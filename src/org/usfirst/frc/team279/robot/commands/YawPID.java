@@ -29,7 +29,7 @@ public class YawPID extends Command implements PIDOutput {
     private double kTolerance = 0.0;
     private double minSpeed = -1.0;
     private double maxSpeed = 1.0;
-    
+    private boolean useRelativeYaw = true;
     private boolean cancel = false;
     
     //dir is +/- 180
@@ -52,7 +52,7 @@ public class YawPID extends Command implements PIDOutput {
         this.setRunWhenDisabled(false);
         useSmartDashBoardValues = false;
 
-        this.yaw = yaw;
+        this.yaw = NavHelper.addDegreesYaw(yaw, 0); //ensure ti's between -180 and 180;
         this.kP = p;
         this.kI = i;
         this.kD = d;
@@ -66,7 +66,7 @@ public class YawPID extends Command implements PIDOutput {
         this.setInterruptible(true);
         this.setRunWhenDisabled(false);
         useSmartDashBoardValues = false;
-        this.yaw = yaw;
+        this.yaw = NavHelper.addDegreesYaw(yaw, 0); //ensure ti's between -180 and 180;
         this.kP = p;
         this.kI = i;
         this.kD = d;
@@ -74,27 +74,57 @@ public class YawPID extends Command implements PIDOutput {
         this.minSpeed = minSpeed; 
     }
     
+    
+    //useRelativeYaw = yaw is relative to current heading rather than absolute value
+    public YawPID(double yaw, double p, double i, double d, double tolerance, double minSpeed, boolean useRelativeYaw) {
+    	super("YawPID");
+        requires(Robot.mecanumDrive);
+        
+        this.setInterruptible(true);
+        this.setRunWhenDisabled(false);
+        useSmartDashBoardValues = false;
+        this.yaw = NavHelper.addDegreesYaw(yaw, 0); //ensure ti's between -180 and 180;
+        this.kP = p;
+        this.kI = i;
+        this.kD = d;
+        this.kTolerance = tolerance;
+        this.minSpeed = minSpeed; 
+        this.useRelativeYaw = useRelativeYaw;
+    }
+    
+    
     //be sure the ultrasonics are enabled prior to getting to this point... 
     // attempting to enable them in the command will likely lead to sporadic behavior
     protected void initialize() {
     	this.cancel = false;
     	
     	if(useSmartDashBoardValues) {
-	    	yaw = SmartDashboard.getNumber("TurnPID Target", 0.0);
+	    	yaw = NavHelper.addDegreesYaw(SmartDashboard.getNumber("TurnPID Target", 0.0), 0.0);
 			kP = SmartDashboard.getNumber("TurnPID P", 0.01	);
 			kI = SmartDashboard.getNumber("TurnPID I", 0.00);
 			kD = SmartDashboard.getNumber("TurnPID D", 0.0);
 			minSpeed = SmartDashboard.getNumber("TurnPID MinSpeed", 0.0);
 			kTolerance = Math.abs(SmartDashboard.getNumber("TurnPID Tolerance", 10));
-    	} 
-    	targetHeading = NavHelper.addDegrees(yaw, Robot.getAhrs().getAngle());
+    	}
+    	
+    	
+    	//the AHRS pidGet() method returns a yaw (+- 180)
+    	if(useRelativeYaw) {
+    		targetHeading = NavHelper.addDegreesYaw(yaw, Robot.getAhrs().getYaw());
+    	} else {
+    		targetHeading = yaw;
+    	}
     	pidController = new PIDController(kP, kI, kD, kF, Robot.getAhrs(), this);
     	pidController.setInputRange(-180.0f, 180.0f);
     	pidController.setOutputRange(-1.0, 1.0);
     	pidController.setContinuous(true);
     	pidController.setAbsoluteTolerance(kTolerance);
-        pidController.setSetpoint(yaw);
-        System.out.println("CMD YawPID: Starting - target: " + yaw + ", current: " + Robot.getAhrs().pidGet());
+        pidController.setSetpoint(targetHeading);
+        if(this.useRelativeYaw){
+        	System.out.println("CMD YawPID: Starting - yaw (relative): " + yaw + ", target: " + targetHeading + ", current: " + Robot.getAhrs().pidGet());
+        } else {
+        	System.out.println("CMD YawPID: Starting - yaw (absolute): " + yaw + ", target: " + targetHeading + ", current: " + Robot.getAhrs().pidGet());
+        }
     }
 
    
@@ -114,7 +144,7 @@ public class YawPID extends Command implements PIDOutput {
 
     
     protected void end() {
-    	System.out.println("CMD YawPID: Ended - target: " + yaw + ", current: " + Robot.getAhrs().pidGet());
+    	System.out.println("CMD YawPID: Ended - target: " + targetHeading + ", current: " + Robot.getAhrs().pidGet());
     	Robot.mecanumDrive.stop();
     	pidController.disable();
     	pidController = null;
@@ -123,7 +153,7 @@ public class YawPID extends Command implements PIDOutput {
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	System.out.println("CMD YawPID: Interrupted - target: " + yaw + ", current: " + Robot.getAhrs().pidGet());
+    	System.out.println("CMD YawPID: Interrupted - target: " + targetHeading + ", current: " + Robot.getAhrs().pidGet());
     	Robot.mecanumDrive.stop();
     	pidController.disable();
     	pidController = null;
@@ -139,11 +169,11 @@ public class YawPID extends Command implements PIDOutput {
 			if(output < 0.0) {
 				tSpd = minSpeed * -1.0;
 			} 
-			System.out.println("CMD YawPID: current: " + Robot.getAhrs().pidGet() + ", Output=" +  output + " minspeed=" + tSpd);
+			//System.out.println("CMD YawPID: current: " + Robot.getAhrs().pidGet() + ", Output=" +  output + " minspeed=" + tSpd);
 			Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, 0.0, tSpd, 0.0);
 			
 		} else {
-			System.out.println("CMD YawPID: current: " + Robot.getAhrs().pidGet() + ",  Output=" +  output);
+			//System.out.println("CMD YawPID: current: " + Robot.getAhrs().pidGet() + ",  Output=" +  output);
 			Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, 0.0, output, 0.0);
 		}
     }

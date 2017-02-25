@@ -4,11 +4,31 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class NavHelper {
 	
+	public static final int xAxis = 0;
+	public static final int yAxis = 1;
+	public static final int zAxis = 2;
+	
+	
+	public static double calcMagnitude(double x, double y){
+		//c^2 = a^2 + b^2
+		return java.lang.Math.sqrt((x * x) + (y * y));
+	}
 	
 	//add degrees to a heading and ensure result is between 0 and 360;
 	public static double addDegrees(double heading, double changeDegrees) {
 		heading = heading + changeDegrees;
 		return heading % 360;
+	}
+	
+	
+	//return a number -180 to +180
+	public static double addDegreesYaw(double yaw, double changeDegrees) {
+		yaw = yaw + changeDegrees;
+		yaw = yaw % 360;
+		if(yaw > 180.0) {
+			return yaw - 360;
+		}
+		return yaw;
 	}
 	
 	//converts a yaw value that the NavX supplies (-180 to +180) to a 0-360 value
@@ -25,23 +45,16 @@ public class NavHelper {
 	}
 	
 	
-	//converts a yaw value that the NavX supplies (-180 to +180) to a 0-360 value
 	public static double convertDegreesToYaw(double degrees){
-        SmartDashboard.putNumber("Input Degrees", degrees);
 		degrees = degrees % 360;
 		if(degrees < 0.0) {
-			SmartDashboard.putNumber("Yaw Answer", degrees);
 			degrees = degrees + 360;
 		} 
 		if (degrees <= 180.0) {
-			SmartDashboard.putNumber("Yaw Answer", degrees);
 			return degrees;
-		} 
-		if (degrees > 180.0) {
-			SmartDashboard.putNumber("Yaw Answer", degrees);
+		} else {
 			return degrees - 360;
 		}
-		return 0.0;
 	}
 	
 	public static final boolean TURNCW = true;

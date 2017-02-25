@@ -166,6 +166,7 @@ public class Robot extends IterativeRobot {
 		
 		
 		SmartDashboard.putData("Save Config",new SaveConfig());
+		SmartDashboard.putData("Reset Gyro",new ResetGyro());
 		
 		SmartDashboard.putData("Toggle Shooter Lights",new ShooterCamLightsToggle());
 		SmartDashboard.putData("GearLightLow Toggle", new GearCamLightToggleLow());
