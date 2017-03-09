@@ -1,11 +1,7 @@
 package org.usfirst.frc.team279.robot.commands;
 
 import org.usfirst.frc.team279.robot.Robot;
-import org.usfirst.frc.team279.util.NavHelper;
 
-import com.kauailabs.navx.frc.AHRS;
-
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
@@ -16,11 +12,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  *
  */
-public class DriveToEncoderDistance extends Command implements PIDOutput, PIDSource {
+public class DriveToUltrasonicDistanceSquared extends Command implements PIDOutput, PIDSource {
 	private boolean useSmartDashBoardValues = false;
 	
-	private Encoder enc;
-	private double direction;   //+ or - 180
+	private String ultrasonicKey;
+
 	public PIDController pidController;
     private double target = 0.0;
     
@@ -31,50 +27,45 @@ public class DriveToEncoderDistance extends Command implements PIDOutput, PIDSou
     private double kTolerance = 0.0;
     private double minSpeed = 0.0;
     private double maxSpeed = 1.0;
-    private double minInput = -10000;
-    private double maxInput = 10000;
+    private double minInput = 0.0;
+    private double maxInput = 300;
     
     private boolean cancel = false;
     
-    //dir is +/- 180
-    public DriveToEncoderDistance(Encoder encoder) {
-    	super("DriveToEncoderDistance");
+    public DriveToUltrasonicDistanceSquared(String ultrasonicName) {
+    	super("DriveToUltrasonicDistanceSquared");
         requires(Robot.mecanumDrive);
         
         this.setInterruptible(true);
         this.setRunWhenDisabled(false);
-        
-        this.enc = encoder;
-        
+        this.ultrasonicKey = ultrasonicName;
         useSmartDashBoardValues = true;
     }
     
     
-    public DriveToEncoderDistance(Encoder encoder, double dir, double target, double p, double i, double d, double tolerance) {
-    	super("DriveToEncoderDistance");
+    public DriveToUltrasonicDistanceSquared(String ultrasonicName, double target, double p, double i, double d, double tolerance) {
+    	super("DriveToUltrasonicDistanceSquared");
         requires(Robot.mecanumDrive);
         
         this.setInterruptible(true);
         this.setRunWhenDisabled(false);
         useSmartDashBoardValues = false;
-        this.enc = encoder;
-        this.direction = dir;
+        this.ultrasonicKey = ultrasonicName;
         this.target = target;
         this.kP = p;
         this.kI = i;
         this.kD = d;
-        this.kTolerance = Math.abs(tolerance);        
+        this.kTolerance = tolerance;        
     }
     
-    public DriveToEncoderDistance(Encoder encoder, double dir, double target, double p, double i, double d, double tolerance, double minSpeed, double maxSpeed, double minInput, double maxInput) {
-    	super("DriveToEncoderDistance");
+    public DriveToUltrasonicDistanceSquared(String ultrasonicName, double target, double p, double i, double d, double tolerance, double minSpeed, double maxSpeed, double minInput, double maxInput) {
+    	super("DriveToUltrasonicDistanceSquared");
         requires(Robot.mecanumDrive);
         
         this.setInterruptible(true);
         this.setRunWhenDisabled(false);
         useSmartDashBoardValues = false;
-        this.enc = encoder;
-        this.direction = dir;
+        this.ultrasonicKey = ultrasonicName;
         this.target = target;
         this.kP = p;
         this.kI = i;
@@ -93,17 +84,14 @@ public class DriveToEncoderDistance extends Command implements PIDOutput, PIDSou
     	this.cancel = false;
     
     	if(useSmartDashBoardValues) {
-    		direction = SmartDashboard.getNumber("DriveEnc Dir", 0.0);
-	    	target = SmartDashboard.getNumber("DriveEnc Target", -2000.0);
-			kP = SmartDashboard.getNumber("DriveEnc P", 0.005);
-			kI = SmartDashboard.getNumber("DriveEnc I", 0.00);
-			kD = SmartDashboard.getNumber("DriveEnc D", 0.0);
-			minSpeed = SmartDashboard.getNumber("DriveEnc MinSpeed", 0.0);
-			maxSpeed = SmartDashboard.getNumber("DriveEnc MaxSpeed", 1.0);
-			kTolerance = Math.abs(SmartDashboard.getNumber("DriveEnc Tolerance", 500));
-    	} 
-    	
-    	enc.reset();
+	    	target = SmartDashboard.getNumber("USDD Target", 24.0);
+			kP = SmartDashboard.getNumber("USDD P", 0.01);
+			kI = SmartDashboard.getNumber("USDD I", 0.00);
+			kD = SmartDashboard.getNumber("USDD D", 0.0);
+			minSpeed = SmartDashboard.getNumber("USDD MinSpeed", 0.0);
+			maxSpeed = SmartDashboard.getNumber("USDD MaxSpeed", 1.0);
+			kTolerance = SmartDashboard.getNumber("USDD Tolerance", 12);
+    	}
     	
     	pidController = new PIDController(kP, kI, kD, kF, this, this);
     	pidController.setInputRange(minInput, maxInput);
@@ -112,7 +100,7 @@ public class DriveToEncoderDistance extends Command implements PIDOutput, PIDSou
     	pidController.setContinuous(false);
         pidController.setSetpoint(target);
         
-        System.out.println("CMD DriveEnc: Starting - target: " + this.target + ", current: " + enc.get());
+        System.out.println("CMD USDD2: Starting - target: " + this.target + ", current: " + Robot.ultrasonics.getUltrasonics().getDistanceInches(ultrasonicKey));
     }
 
    
@@ -127,13 +115,13 @@ public class DriveToEncoderDistance extends Command implements PIDOutput, PIDSou
 
     
     protected boolean isFinished() {
-    	//if(this.cancel){ return true; }
-    	return Math.abs(target - enc.get()) < kTolerance;
+    	if(this.cancel){ return true; }
+    	return pidController.onTarget();
     }
 
     
     protected void end() {
-    	System.out.println("CMD DriveEnc: Ended - target: " + this.target + ", current: " + enc.get());
+    	System.out.println("CMD USDD2: Ended - target: " + this.target + ", current: " + Robot.ultrasonics.getUltrasonics().getDistanceInches(ultrasonicKey));
     	Robot.mecanumDrive.stop();
     	pidController.disable();
     	pidController = null;
@@ -142,7 +130,7 @@ public class DriveToEncoderDistance extends Command implements PIDOutput, PIDSou
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	System.out.println("CMD DriveEnc: Interrupted - target: " + this.target + ", current: " + enc.get());
+    	System.out.println("CMD USDD2: Interrupted - target: " + this.target + ", current: " + Robot.ultrasonics.getUltrasonics().getDistanceInches(ultrasonicKey));
     	Robot.mecanumDrive.stop();
     	pidController.disable();
     	pidController = null;
@@ -158,11 +146,22 @@ public class DriveToEncoderDistance extends Command implements PIDOutput, PIDSou
     }
     
     public double pidGet(){
-    	return enc.get();
+    	double i = 0.0;
+    	int countInvalid = 0;
+    	while(true) {
+    		i = Robot.ultrasonics.getUltrasonics().getDistanceInches(ultrasonicKey);
+    		if(i < 0.0 || i > 250){
+        		countInvalid++;
+        		if(countInvalid == 3) {
+            		System.out.println("CMD USDD2: Warning! Three invalid measurements received.. ending command");
+            		this.cancel = true;
+            	} 
+        	} else {
+        		return i;
+        	}
+    	}
     }
     
-    
-    //remember that -Y is forwards
     public void pidWrite(double output) {
     	if(this.cancel){ 
     		Robot.mecanumDrive.stop(); 
@@ -170,12 +169,12 @@ public class DriveToEncoderDistance extends Command implements PIDOutput, PIDSou
     		if(Math.abs(output) < this.minSpeed) {
     			//System.out.println("CMD USDD: MinSpeed Reached (Output: " + output + ")");
     			if(output > 0.0) {
-    				Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, minSpeed, 0.0, direction);
+    				Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, minSpeed, 0.0, 0.0);
     			} else {
-    				Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, minSpeed * -1.0, 0.0, direction);
+    				Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, minSpeed * -1.0, 0.0, 0.0);
     			}
     		} else {
-    			Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, output, 0.0, direction);
+    			Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, output, 0.0, 0.0);
     		}
     	}
     }

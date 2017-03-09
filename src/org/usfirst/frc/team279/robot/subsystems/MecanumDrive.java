@@ -33,6 +33,11 @@ public class MecanumDrive extends Subsystem {
 		return encoderPulseCount;
 	}
 	
+	public double getEncoderPulsePerInch(){
+		return encoderPulseCount/(Math.PI * wheelDiameterInches);
+	}
+	
+	
 	private int encoderLeftFrontPortA = 0;
 	private int encoderLeftFrontPortB = 1;
 	private int encoderRightFrontPortA = 4;
@@ -172,8 +177,8 @@ public class MecanumDrive extends Subsystem {
 	
 		
     public void initDefaultCommand() {
-    	setDefaultCommand(new org.usfirst.frc.team279.robot.commands.MecDriveTeleopDefaultFPS());
-    	System.out.println("MD: Set default command to MecDriveTeleopDefaultFPS");
+    	setDefaultCommand(new org.usfirst.frc.team279.robot.commands.MecDriveTeleopDefaultFPSAntiSkew());
+    	System.out.println("MD: Set default command to MecDriveTeleopDefaultFPSAntiSkew");
     }
     
     
