@@ -60,8 +60,11 @@ public class OI {
 	//--------------------------------------------------------------------------
 	//driver buttons
 	private JoystickButton resetGyroBtn;
-	public JoystickButton slowSpeedBtn;
+	public JoystickButton slowSpeedBtn; //mecanum subsystem looks for this
 	private JoystickButton gearSaveBtn;
+	private JoystickButton pointAtBoiler;
+	private JoystickButton pointAtGear;
+	private JoystickButton unloadGear; 
 	
 	//go buttons
 	private JoystickButton harvForwardBtn;
@@ -110,6 +113,10 @@ public class OI {
 		resetGyroBtn = new JoystickButton(rightDriverStick, 2);
 		slowSpeedBtn = new JoystickButton(rightDriverStick, 1);
 		gearSaveBtn = new JoystickButton(leftDriverStick, 1);
+		pointAtBoiler = new JoystickButton(leftDriverStick, 4);
+		pointAtGear = new JoystickButton(rightDriverStick, 4);
+		unloadGear = new JoystickButton(rightDriverStick, 5);
+		
 		
 		//GO Buttons
 		shootBtn = 0.75;
@@ -125,8 +132,13 @@ public class OI {
 		
 		//Applying buttons to commands
 		resetGyroBtn.whenPressed(new ResetGyro());
-		
 		gearSaveBtn.whenPressed(new GearPosSave());
+		
+		pointAtBoiler.whenPressed(new PointAtBoiler());
+		pointAtGear.whenPressed(new PointAtGear());
+		//unloadGear.whenPressed(new UnloadGear());
+		
+		
 		
 		harvForwardBtn.whenPressed(new RunHarvelatorFWD());
 		harvForwardBtn.whenReleased(new StopHarvelator());

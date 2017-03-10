@@ -24,6 +24,11 @@ public class Robot extends IterativeRobot {
 	
 	private String prefPrefix = "robot_";
 	
+	private static boolean setForTesting = false; //allow commands to query if we ra trying to set for competition or testing
+	public static boolean getSetForTesting(){
+		return setForTesting;
+	}
+	
 	private static AHRS ahrs = null;
 	public static AHRS getAhrs(){
 		if(ahrs == null) {
@@ -134,7 +139,8 @@ public class Robot extends IterativeRobot {
 		oi = new OI();
 		oi.init();
 
-		Robot.getAhrs().setAngleAdjustment(ahrsGyroAdjustment);
+		//Robot.getAhrs().setAngleAdjustment(ahrsGyroAdjustment);
+		
 		
 		SmartDashboard.putNumber("TurnPID Target", 0.0);
 		SmartDashboard.putNumber("TurnPID P", 0.0001);
@@ -143,6 +149,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("TurnPID MinSpeed", 0.15);
 		SmartDashboard.putNumber("TurnPID Tolerance", 5.0);
 		SmartDashboard.putData("TurnPID Execute",new YawPID());
+		SmartDashboard.putData("SquareToUS", new SquareToUltrasonics("rangeGearLeft", "rangeGearRight"));
+		SmartDashboard.putData("RotateTocenterVisionTarget Gear", new RotateToCenterVisionTarget("Gear", "pixelOffset"));
 		
 		SmartDashboard.putNumber("DriveEnc Dir",  0.0);
 		SmartDashboard.putNumber("DriveEnc Target", 0.0);
@@ -161,12 +169,14 @@ public class Robot extends IterativeRobot {
 		chooser.addObject("Left Gear", new AutoLeftGear());
 		chooser.addObject("Right Gear", new AutoRightGear());
 		chooser.addObject("Drive Past Line", new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront(), 0, -1146.5, 0.00035, 0, 0, 20, 0.25, 1.0, -10000, 10000));
-		chooser.addObject("Shoot", new AutoShooting());
+		chooser.addObject("Shoot - Boiler Left", new AutoShootingBoilerOnLeft());
+		chooser.addObject("Shoot - Boiler Right", new AutoShootingBoilerOnRight());
 		SmartDashboard.putData("Auto Chooser", chooser);		
 		
 		
 		SmartDashboard.putData("Save Config",new SaveConfig());
 		SmartDashboard.putData("Reset Gyro",new ResetGyro());
+		SmartDashboard.putData("Reset Encoders",new ResetEncoders());
 		
 		SmartDashboard.putData("Toggle Shooter Lights",new ShooterCamLightsToggle());
 		SmartDashboard.putData("GearLightLow Toggle", new GearCamLightToggleLow());
@@ -178,13 +188,13 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotPeriodic() {
 		SmartDashboard.putNumber("LF Encoder Val", mecanumDrive.getEncoderLeftFront().get());
-		SmartDashboard.putNumber("LR Encoder Val", mecanumDrive.getEncoderLeftRear().get());
-		//SmartDashboard.putNumber("RF Encoder Val", mecanumDrive.getEncoderRightFront().get());
+		//SmartDashboard.putNumber("LR Encoder Val", mecanumDrive.getEncoderLeftRear().get());
+		SmartDashboard.putNumber("RF Encoder Val", mecanumDrive.getEncoderRightFront().get());
 		//SmartDashboard.putNumber("RR Encoder Val", mecanumDrive.getEncoderRightRear().get());
 		//SmartDashboard.putBoolean("LS Open", geargizmo.getOpenDoorSwitch().get());
 		//SmartDashboard.putBoolean("LS Close", geargizmo.getCloseDoorSwitch().get());
-		//SmartDashboard.putBoolean("LS Open2", geargizmo.getOpenCount());
-		//SmartDashboard.putBoolean("LS Close2", geargizmo.getCloseCount());
+		SmartDashboard.putBoolean("LS Open2", geargizmo.getOpenCount());
+		SmartDashboard.putBoolean("LS Close2", geargizmo.getCloseCount());
 		
 		
 		//Permanent
@@ -208,6 +218,7 @@ public class Robot extends IterativeRobot {
 	
 	
 	public void autonomousInit() {
+		this.ahrs.reset();
 		autonomousCommand = chooser.getSelected();
 		if (autonomousCommand != null)
 			autonomousCommand.start();

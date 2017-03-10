@@ -197,7 +197,7 @@ public class DriveToUltrasonicDistanceX extends Command implements PIDOutput, PI
     	double temp = 0.0;
     	 for(String key : ultrasonicKeys) {
          	temp = Robot.ultrasonics.getUltrasonics().getDistanceInches(key);
-         	if(temp < shortest) {
+         	if(temp < shortest && temp > 0.0 && temp != Double.POSITIVE_INFINITY) {
          		shortest = temp;
          	}
         }

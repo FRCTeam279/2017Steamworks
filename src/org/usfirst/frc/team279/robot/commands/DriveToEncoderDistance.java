@@ -117,10 +117,10 @@ public class DriveToEncoderDistance extends Command implements PIDOutput, PIDSou
 
    
     protected void execute() {
-    	if(pidController == null) {
+    	if(pidController == null && !this.cancel) {
     		this.initialize();
     	}
-    	if(!pidController.isEnabled()){
+    	if(!pidController.isEnabled() && !this.cancel){
     		pidController.enable();
     	}
     }

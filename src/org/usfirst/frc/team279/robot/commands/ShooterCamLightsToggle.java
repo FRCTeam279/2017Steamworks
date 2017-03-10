@@ -27,7 +27,7 @@ public class ShooterCamLightsToggle extends Command {
     	if(Robot.camLightShooter.getRelay().get() != Value.kOff) {
     		Robot.camLightShooter.getRelay().set(Value.kOff);
     	} else {
-    		Robot.camLightShooter.getRelay().set(Value.kOn);
+    		Robot.camLightShooter.getRelay().set(Value.kForward);
     	}
     }
 

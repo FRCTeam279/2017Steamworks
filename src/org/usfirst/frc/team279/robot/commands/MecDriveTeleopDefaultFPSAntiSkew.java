@@ -106,6 +106,11 @@ public class MecDriveTeleopDefaultFPSAntiSkew extends Command implements PIDOutp
     	y = Robot.oi.filterInput(y, Robot.oi.getLeftStickNullZone(), 1);
     	z = Robot.oi.filterInput(z, Robot.oi.getRightStickNullZone(), 1);
     	
+    	if(Robot.oi.slowSpeedBtn.get()) {
+    		y = y/2;
+    		x = x/2;
+    	}
+    	
     	boolean translating = false;
     	if(x > 0.0 || x < 0.0 || y > 0.0 || y < 0.0){
     		translating = true;

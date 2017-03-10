@@ -129,6 +129,8 @@ public class YawPID extends Command implements PIDOutput {
 
    
     protected void execute() {
+    	if(this.cancel) { return; }
+    	
     	if(pidController == null) {
     		this.initialize();
     	}
