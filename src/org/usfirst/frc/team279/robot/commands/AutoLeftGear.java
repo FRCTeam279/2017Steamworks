@@ -15,7 +15,7 @@ public class AutoLeftGear extends CommandGroup {
     	addSequential(new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront(), 0, -825, 0.001, 0, 0, 20, 0.2, 1.0, -10000, 10000), 3.5);
     	addSequential(new YawPID(-35, 0.008, 0, 0, 2, .2), 2.5);
     	
-    	if(!Robot.getSetForTesting()){
+    	if(Robot.getSetForTesting()){
 	    	addSequential(new Delay(150)); 
 	    	
 	    	

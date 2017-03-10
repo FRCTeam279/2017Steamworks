@@ -9,10 +9,10 @@ public class AutoMiddleGear extends CommandGroup {
     public AutoMiddleGear() {
     	addSequential(new GearCamLightToggleHigh());
     	
-    	addSequential(new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront(), 0, -400, 0.008, 0, 0, 20, 0.2, 1.0, -10000, 10000));
-    	addSequential(new YawPID(-92, 0.008, 0, 0, 2, .2));
+    	addSequential(new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront(), 0, -400, 0.008, 0, 0, 20, 0.2, 1.0, -10000, 10000), 3.5);
+    	addSequential(new YawPID(-92, 0.008, 0, 0, 2, .2), 2.5);
     	
-    	if(!Robot.getSetForTesting()){
+    	if(Robot.getSetForTesting()){
 	    	addSequential(new Delay(300));
 	    	
 	        //public RotateToCenterVisionTarget(String table, String key, double p, double i, double d, double tolerance, double minSpeed)

@@ -14,11 +14,11 @@ public class AutoRightGear extends CommandGroup {
     	//13.26pulses per inch on mule (was 6"/250)
     	addSequential(new GearCamLightToggleHigh());
     	
-    	//addSequential(new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront(), 0, -550, 0.001, 0, 0, 20, 0.2, 1.0, -10000, 10000));
-    	addSequential(new YawPID(-145, 0.008, 0, 0, 2, .2));
+    	addSequential(new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront(), 0, -825, 0.001, 0, 0, 20, 0.2, 1.0, -10000, 10000), 3.5);
+    	addSequential(new YawPID(-145, 0.008, 0, 0, 2, .2), 2.5);
     	//stuff here for placing the gear
     	
-    	if(!Robot.getSetForTesting()){
+    	if(Robot.getSetForTesting()){
 	    	addSequential(new Delay(150)); 
 	    	
 	    	

@@ -218,7 +218,7 @@ public class Robot extends IterativeRobot {
 	
 	
 	public void autonomousInit() {
-		this.ahrs.reset();
+		//
 		autonomousCommand = chooser.getSelected();
 		if (autonomousCommand != null)
 			autonomousCommand.start();
