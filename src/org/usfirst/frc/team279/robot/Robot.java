@@ -142,23 +142,23 @@ public class Robot extends IterativeRobot {
 		//Robot.getAhrs().setAngleAdjustment(ahrsGyroAdjustment);
 		
 		
-		SmartDashboard.putNumber("TurnPID Target", 0.0);
-		SmartDashboard.putNumber("TurnPID P", 0.0001);
-		SmartDashboard.putNumber("TurnPID I", 0.00);
-		SmartDashboard.putNumber("TurnPID D", 0.0);
-		SmartDashboard.putNumber("TurnPID MinSpeed", 0.15);
-		SmartDashboard.putNumber("TurnPID Tolerance", 5.0);
-		SmartDashboard.putData("TurnPID Execute",new YawPID());
-		SmartDashboard.putData("SquareToUS", new SquareToUltrasonics("rangeGearLeft", "rangeGearRight"));
-		SmartDashboard.putData("RotateTocenterVisionTarget Gear", new RotateToCenterVisionTarget("Gear", "pixelOffset"));
+		//SmartDashboard.putNumber("TurnPID Target", 0.0);
+		//SmartDashboard.putNumber("TurnPID P", 0.0001);
+		//SmartDashboard.putNumber("TurnPID I", 0.00);
+		//SmartDashboard.putNumber("TurnPID D", 0.0);
+		//SmartDashboard.putNumber("TurnPID MinSpeed", 0.15);
+		//SmartDashboard.putNumber("TurnPID Tolerance", 5.0);
+		//SmartDashboard.putData("TurnPID Execute",new YawPID());
+		//SmartDashboard.putData("SquareToUS", new SquareToUltrasonics("rangeGearLeft", "rangeGearRight"));
+		//SmartDashboard.putData("RotateTocenterVisionTarget Gear", new RotateToCenterVisionTarget("Gear", "pixelOffset"));
 		
-		SmartDashboard.putNumber("DriveEnc Dir",  0.0);
-		SmartDashboard.putNumber("DriveEnc Target", 0.0);
-		SmartDashboard.putNumber("DriveEnc P", 0.00035);
-		SmartDashboard.putNumber("DriveEnc Tolerance", 50);
-		SmartDashboard.putNumber("DriveEnc minSpeed", 0.15);
-		SmartDashboard.putData("DriveEnc Execute LFEnc", new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront()));
-		SmartDashboard.putData("DriveEnc Execute RFEnc", new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderRightFront()));
+		//SmartDashboard.putNumber("DriveEnc Dir",  0.0);
+		//SmartDashboard.putNumber("DriveEnc Target", 0.0);
+		//SmartDashboard.putNumber("DriveEnc P", 0.00035);
+		//SmartDashboard.putNumber("DriveEnc Tolerance", 50);
+		//SmartDashboard.putNumber("DriveEnc minSpeed", 0.15);
+		//SmartDashboard.putData("DriveEnc Execute LFEnc", new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront()));
+		//SmartDashboard.putData("DriveEnc Execute RFEnc", new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderRightFront()));
 		
 		
 		
@@ -193,8 +193,8 @@ public class Robot extends IterativeRobot {
 		//SmartDashboard.putNumber("RR Encoder Val", mecanumDrive.getEncoderRightRear().get());
 		//SmartDashboard.putBoolean("LS Open", geargizmo.getOpenDoorSwitch().get());
 		//SmartDashboard.putBoolean("LS Close", geargizmo.getCloseDoorSwitch().get());
-		SmartDashboard.putBoolean("LS Open2", geargizmo.getOpenCount());
-		SmartDashboard.putBoolean("LS Close2", geargizmo.getCloseCount());
+		//SmartDashboard.putBoolean("LS Open2", geargizmo.getOpenCount());
+		//SmartDashboard.putBoolean("LS Close2", geargizmo.getCloseCount());
 		
 		
 		//Permanent
