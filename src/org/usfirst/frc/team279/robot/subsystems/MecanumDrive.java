@@ -178,8 +178,10 @@ public class MecanumDrive extends Subsystem {
 		
     public void initDefaultCommand() {
     	//setDefaultCommand(new org.usfirst.frc.team279.robot.commands.MecDriveTeleopDefaultFPSAntiSkew());
+    	//System.out.println("MD: Set default command to MecDriveTeleopDefaultFPSAntiSkew");
+    	
     	setDefaultCommand(new org.usfirst.frc.team279.robot.commands.MecDriveTeleopDefaultFPS());
-    	System.out.println("MD: Set default command to MecDriveTeleopDefaultFPSAntiSkew");
+    	System.out.println("MD: Set default command to MecDriveTeleopDefaultFPS");
     }
     
     

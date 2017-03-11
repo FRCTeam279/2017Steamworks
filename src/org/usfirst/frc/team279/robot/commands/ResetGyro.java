@@ -21,6 +21,7 @@ public class ResetGyro extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	Robot.getAhrs().reset();
+    	System.out.println("ResetGyro Called");
     }
 
     // Make this return true when this Command no longer needs to run execute()

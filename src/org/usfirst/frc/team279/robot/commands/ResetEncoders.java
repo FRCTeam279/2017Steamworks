@@ -25,6 +25,7 @@ public class ResetEncoders extends Command {
     	Robot.mecanumDrive.getEncoderRightFront().reset();
     	Robot.mecanumDrive.getEncoderLeftRear().reset();
     	Robot.mecanumDrive.getEncoderRightRear().reset();
+    	System.out.println("ResetEncoders Called");
     }
 
     protected boolean isFinished() {

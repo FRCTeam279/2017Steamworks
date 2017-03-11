@@ -36,7 +36,7 @@ public class RotateToCenterVisionTarget extends Command implements PIDOutput {
     private double minSpeed = -1.0;
     private double maxSpeed = 1.0;
 
-    private double imageWidth = 320.0;
+    private double imageWidth = 320.0;  //TODO:  ALSO need to make FOV a variable
     
     private boolean cancel = false;
     private int errorCount = 0;
@@ -44,24 +44,25 @@ public class RotateToCenterVisionTarget extends Command implements PIDOutput {
     private SamplesSystem samples = new SamplesSystem();
     private int sampleCount = 0;
     
-    public RotateToCenterVisionTarget(String table, String key) {
+    public RotateToCenterVisionTarget(String table, String key, double imgWidth) {
     	super("RotateToCenterVisionTarget");
         requires(Robot.mecanumDrive);
         this.table = table;
         this.key = key;
         this.setInterruptible(true);
         this.setRunWhenDisabled(false);
-
+        imageWidth = imgWidth;
         useSmartDashBoardValues = true;
     }
     
     
-    public RotateToCenterVisionTarget(String table, String key, double p, double i, double d, double tolerance) {
+    public RotateToCenterVisionTarget(String table, String key,  double imgWidth, double p, double i, double d, double tolerance) {
     	super("RotateToCenterVisionTarget");
         requires(Robot.mecanumDrive);
         
         this.setInterruptible(true);
         this.setRunWhenDisabled(false);
+        imageWidth = imgWidth;
         useSmartDashBoardValues = false;
         this.table = table;
         this.key = key;
@@ -71,12 +72,13 @@ public class RotateToCenterVisionTarget extends Command implements PIDOutput {
         this.kTolerance = Math.abs(tolerance);        
     }
     
-    public RotateToCenterVisionTarget(String table, String key, double p, double i, double d, double tolerance, double minSpeed) {
+    public RotateToCenterVisionTarget(String table, String key,  double imgWidth, double p, double i, double d, double tolerance, double minSpeed) {
     	super("RotateToCenterVisionTarget");
         requires(Robot.mecanumDrive);
         
         this.setInterruptible(true);
         this.setRunWhenDisabled(false);
+        imageWidth = imgWidth;
         useSmartDashBoardValues = false;
         this.table = table;
         this.key = key;

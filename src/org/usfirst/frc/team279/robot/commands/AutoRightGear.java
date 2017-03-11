@@ -26,15 +26,15 @@ public class AutoRightGear extends CommandGroup {
 	    	addSequential(new RotateToCenterVisionTarget("Gear", "pixelOffset", 0.008, 0.0001, 0.0, 25, 0.18), 2.5);
 	    	
 	    	//DriveToUltrasonicDistanceX(String ultrasonicName, double target, double p, double i, double d, double tolerance, double minSpeed)
-	    	addSequential(new DriveToUltrasonicDistanceX(new String[] { "rangeGearLeft", "rangeGearRight" }, 14.0, 0.006, 0.0, 0.0, 0.5, 0.3), 4.0);
+	    	addSequential(new DriveToUltrasonicDistanceX(new String[] { "rangeGearLeft", "rangeGearRight" }, 14.0, 0.006, 0.0, 0.0, 0.5, 0.3), 3.0);
 	    	
-	    	addSequential(new SquareToUltrasonics("rangeGearLeft", "rangeGearRight", 14.0, 0.008, 0.0, 0.0, 0.5, 0.25), 3.0);
+	    	addSequential(new SquareToUltrasonics("rangeGearLeft", "rangeGearRight", 14.0, 0.008, 0.0, 0.0, 0.5, 0.25), 2.5);
 	    	
 	    	addSequential(new OpenGearDoor(), 1.5);
 	    	
-	    	addSequential(new DriveToUltrasonicDistanceX(new String[] { "rangeGearLeft", "rangeGearRight" }, 4.0, 0.006, 0.0, 0.0, 0.5, 0.3), 4.0);
+	    	addSequential(new DriveToUltrasonicDistanceX(new String[] { "rangeGearLeft", "rangeGearRight" }, 4.0, 0.006, 0.0, 0.0, 0.5, 0.3), 3.0);
 	    	
-	    	addSequential(new DriveToUltrasonicDistanceX(new String[] { "rangeGearLeft", "rangeGearRight" }, 24.0, 0.008, 0.0, 0.0, 0.5, 0.3), 4.0);
+	    	addSequential(new DriveToUltrasonicDistanceX(new String[] { "rangeGearLeft", "rangeGearRight" }, 24.0, 0.008, 0.0, 0.0, 0.5, 0.3), 3.0);
     	}
     	addSequential(new GearCamLightToggleHigh());
     }
