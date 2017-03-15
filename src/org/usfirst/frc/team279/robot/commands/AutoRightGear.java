@@ -10,6 +10,10 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class AutoRightGear extends CommandGroup {
 
     public AutoRightGear() {
+    	
+    	Robot.getAhrs().reset();
+    	
+    	
     	//9.55pulses per inch on prod going ahead (4"/120p).. ~half that going sideways
     	//13.26pulses per inch on mule (was 6"/250)
     	addSequential(new GearCamLightToggleHigh());

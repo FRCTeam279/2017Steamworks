@@ -137,17 +137,29 @@ public class YawPID extends Command implements PIDOutput {
     	if(!pidController.isEnabled()){
     		pidController.enable();
     	}
+    	
+    	
     }
 
     
     protected boolean isFinished() {
-    	return pidController.onTarget();
+    	System.out.println("CMD YawPID isFinished: Current yaw = " + Robot.getAhrs().pidGet() + ", OnTarget = " + pidController.onTarget());
+    	if(pidController.onTarget()) {
+    		pidController.disable();
+    		Robot.mecanumDrive.stop();
+    		return true;
+    	} else {
+    		return false;
+    	}
+    
+    	
     }
 
     
     protected void end() {
     	System.out.println("CMD YawPID: Ended - target: " + targetHeading + ", current: " + Robot.getAhrs().pidGet());
     	Robot.mecanumDrive.stop();
+    	this.pidController.disable();
     	pidController.disable();
     	pidController = null;
     }

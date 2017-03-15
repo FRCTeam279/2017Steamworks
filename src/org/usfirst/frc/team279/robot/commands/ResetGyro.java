@@ -20,8 +20,8 @@ public class ResetGyro extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+    	System.out.println("ResetGyro Called. Yaw value when called: " + Robot.getAhrs().getYaw());
     	Robot.getAhrs().reset();
-    	System.out.println("ResetGyro Called");
     }
 
     // Make this return true when this Command no longer needs to run execute()

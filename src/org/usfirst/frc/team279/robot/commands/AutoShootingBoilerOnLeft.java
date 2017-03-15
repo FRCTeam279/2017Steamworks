@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class AutoShootingBoilerOnLeft extends CommandGroup {
 
     public AutoShootingBoilerOnLeft() {
+    	Robot.getAhrs().reset();
     	addSequential(new ShooterCamLightsToggle());
     	addSequential(new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront(), 0, -400, 0.008, 0, 0, 20, 0.2, 1.0, -10000, 10000));
     	addSequential(new YawPID(-137, 0.008, 0, 0, 4, 0.2));
