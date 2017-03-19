@@ -112,28 +112,30 @@ public class DriveToEncoderDistance extends Command implements PIDOutput, PIDSou
     	pidController.setContinuous(false);
         pidController.setSetpoint(target);
         
-        System.out.println("CMD DriveEnc: Starting - target: " + this.target + ", current: " + enc.get());
+        System.out.println("CMD DriveEnc: Starting(" + System.currentTimeMillis() + ") - target: " + this.target + ", current: " + enc.get());
     }
 
    
     protected void execute() {
-    	if(pidController == null && !this.cancel) {
+    	if(this.cancel){ return; }
+    	
+    	if(pidController == null) {
     		this.initialize();
     	}
-    	if(!pidController.isEnabled() && !this.cancel){
+    	if(!pidController.isEnabled()){
     		pidController.enable();
     	}
     }
 
     
     protected boolean isFinished() {
-    	//if(this.cancel){ return true; }
+    	if(this.cancel){ return true; }
     	return Math.abs(target - enc.get()) < kTolerance;
     }
 
     
     protected void end() {
-    	System.out.println("CMD DriveEnc: Ended - target: " + this.target + ", current: " + enc.get());
+    	System.out.println("CMD DriveEnc: Ended(" + System.currentTimeMillis() + ") - target: " + this.target + ", current: " + enc.get());
     	Robot.mecanumDrive.stop();
     	pidController.disable();
     	pidController = null;
@@ -142,7 +144,7 @@ public class DriveToEncoderDistance extends Command implements PIDOutput, PIDSou
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	System.out.println("CMD DriveEnc: Interrupted - target: " + this.target + ", current: " + enc.get());
+    	System.out.println("CMD DriveEnc: Interrupted(" + System.currentTimeMillis() + ") - target: " + this.target + ", current: " + enc.get());
     	Robot.mecanumDrive.stop();
     	pidController.disable();
     	pidController = null;
@@ -164,7 +166,13 @@ public class DriveToEncoderDistance extends Command implements PIDOutput, PIDSou
     
     //remember that -Y is forwards
     public void pidWrite(double output) {
-    	if(this.cancel){ 
+    	if(this.pidController ==  null) { 
+    		System.out.println("CMD DriveEnc: Warning! pidWrite Called after pidController set to null!");
+    		Robot.mecanumDrive.stop();
+    		return;
+    	}
+    	
+    	if(this.cancel || this.isFinished()){ 
     		Robot.mecanumDrive.stop(); 
     	} else {
     		if(Math.abs(output) < this.minSpeed) {

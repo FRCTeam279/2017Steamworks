@@ -2,6 +2,8 @@ package org.usfirst.frc.team279.robot.commands;
 
 import org.usfirst.frc.team279.robot.Robot;
 
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
@@ -13,10 +15,29 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  *
  */
 public class DriveToUltrasonicDistanceX extends Command implements PIDOutput, PIDSource {
+	private class SkewPidOutput implements PIDOutput {
+		private double pidOutputValue = 0.0;
+		public double getPidOutputValue(){
+			return pidOutputValue;
+		}
+		public void pidWrite(double output) {
+	    	pidOutputValue = output;
+	    }
+	}
+	
+	
 	private boolean useSmartDashBoardValues = false;
 	
 	private String[] ultrasonicKeys;
-
+	private AHRS ahrs = null;
+	//Anti-Skew PID Variables
+	public PIDController skewController;
+	private SkewPidOutput skewPidOutput = new SkewPidOutput();
+	private double skewP = 0.01;
+    private double skewTolerance = 1.0;
+    private double skewOutputValue = 0.0;
+    
+    
 	public PIDController pidController;
     private double target = 0.0;
     
@@ -137,6 +158,13 @@ public class DriveToUltrasonicDistanceX extends Command implements PIDOutput, PI
 			kTolerance = SmartDashboard.getNumber("USDD Tolerance", 12);
     	}
     	
+    	ahrs = Robot.getAhrs();
+    	skewController = new PIDController(this.skewP, 0.0, 0.0, 0.0, Robot.getAhrs(), skewPidOutput);
+    	skewController.setInputRange(-180, 180);
+    	skewController.setOutputRange(-1.0, 1.0);
+    	skewController.setAbsoluteTolerance(skewTolerance);
+    	skewController.setContinuous(true);
+    	
     	pidController = new PIDController(kP, kI, kD, kF, this, this);
     	pidController.setInputRange(minInput, maxInput);
     	pidController.setOutputRange(maxSpeed * -1.0, maxSpeed);
@@ -144,7 +172,7 @@ public class DriveToUltrasonicDistanceX extends Command implements PIDOutput, PI
     	pidController.setContinuous(false);
         pidController.setSetpoint(target);
         
-        System.out.println("CMD USDD: Starting - target: " + this.target + ", current: " + getShortest());
+        System.out.println("CMD USDD_X: Starting (" + System.currentTimeMillis() + ") - target: " + this.target + ", current: " + getShortest());
     }
 
    
@@ -154,6 +182,7 @@ public class DriveToUltrasonicDistanceX extends Command implements PIDOutput, PI
     	}
     	if(!pidController.isEnabled() && !this.cancelling){
     		pidController.enable();
+    		skewController.setSetpoint(this.ahrs.pidGet());
     	}
     }
 
@@ -165,20 +194,24 @@ public class DriveToUltrasonicDistanceX extends Command implements PIDOutput, PI
 
     
     protected void end() {
-    	System.out.println("CMD USDD: Ended - target: " + this.target + ", current: " + getShortest());
+    	System.out.println("CMD USDD_X: Ended(" + System.currentTimeMillis() + ") - target: " + this.target + ", current: " + getShortest());
     	Robot.mecanumDrive.stop();
     	pidController.disable();
     	pidController = null;
+    	skewController.disable();
+    	skewController = null;
     	this.cancelling = false;
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	System.out.println("CMD USDD: Interrupted - target: " + this.target + ", current: " + getShortest());
+    	System.out.println("CMD USDD_X: Interrupted(" + System.currentTimeMillis() + ") - target: " + this.target + ", current: " + getShortest());
     	Robot.mecanumDrive.stop();
     	pidController.disable();
     	pidController = null;
+    	skewController.disable();
+    	skewController = null;
     	this.cancelling = false;
     }
     
@@ -197,7 +230,7 @@ public class DriveToUltrasonicDistanceX extends Command implements PIDOutput, PI
     	double temp = 0.0;
     	 for(String key : ultrasonicKeys) {
          	temp = Robot.ultrasonics.getUltrasonics().getDistanceInches(key);
-         	if(temp < shortest && temp > 0.0 && temp != Double.POSITIVE_INFINITY) {
+         	if(temp < shortest) {
          		shortest = temp;
          	}
         }
@@ -214,7 +247,7 @@ public class DriveToUltrasonicDistanceX extends Command implements PIDOutput, PI
     		if(distance < 0.0 || distance > 250){
         		countInvalid++;
         		if(countInvalid == 3) {
-            		System.out.println("CMD USDD: Warning! Three invalid measurements received.. ending command");
+            		System.out.println("CMD USDD_X: Warning! Three invalid measurements received.. ending command");
             		this.cancelling = true;
             		return this.target;
             	} 
@@ -225,19 +258,25 @@ public class DriveToUltrasonicDistanceX extends Command implements PIDOutput, PI
     }
     
     public void pidWrite(double output) {
-    	output = output * -1.0;
-    	if(this.cancelling){ 
+    	if(this.pidController ==  null) { 
+    		System.out.println("CMD USDD_X: Warning! pidWrite Called after pidController set to null!");
+    		Robot.mecanumDrive.stop();
+    		return;
+    	}
+    	
+    	if(this.cancelling || this.isFinished()){ 
     		Robot.mecanumDrive.stop(); 
     	} else {
+    		output = output * -1.0;
     		if(Math.abs(output) < this.minSpeed) {
-    			//System.out.println("CMD USDD: MinSpeed Reached (Output: " + output + ")");
+    			//System.out.println("CMD USDD_X: MinSpeed Reached (Output: " + output + ")");
     			if(output > 0.0) {
-    				Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(minSpeed, 0.0, 0.0, 0.0);
+    				Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(minSpeed, 0.0, this.skewPidOutput.getPidOutputValue() , 0.0);
     			} else {
-    				Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(minSpeed * -1.0, 0.0, 0.0, 0.0);
+    				Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(minSpeed * -1.0, 0.0, this.skewPidOutput.getPidOutputValue(), 0.0);
     			}
     		} else {
-    			Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(output, 0.0, 0.0, 0.0);
+    			Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(output, 0.0, this.skewPidOutput.getPidOutputValue(), 0.0);
     		}
     	}
     }

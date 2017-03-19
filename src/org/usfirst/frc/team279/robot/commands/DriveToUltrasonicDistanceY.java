@@ -2,6 +2,8 @@ package org.usfirst.frc.team279.robot.commands;
 
 import org.usfirst.frc.team279.robot.Robot;
 
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
@@ -13,10 +15,29 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  *
  */
 public class DriveToUltrasonicDistanceY extends Command implements PIDOutput, PIDSource {
+	private class SkewPidOutput implements PIDOutput {
+		private double pidOutputValue = 0.0;
+		public double getPidOutputValue(){
+			return pidOutputValue;
+		}
+		public void pidWrite(double output) {
+	    	pidOutputValue = output;
+	    }
+	}
+	
+	
 	private boolean useSmartDashBoardValues = false;
 	
-	private String ultrasonicKey;
-
+	private String[] ultrasonicKeys;
+	private AHRS ahrs = null;
+	//Anti-Skew PID Variables
+	public PIDController skewController;
+	private SkewPidOutput skewPidOutput = new SkewPidOutput();
+	private double skewP = 0.01;
+    private double skewTolerance = 1.0;
+    private double skewOutputValue = 0.0;
+    
+    
 	public PIDController pidController;
     private double target = 0.0;
     
@@ -30,27 +51,46 @@ public class DriveToUltrasonicDistanceY extends Command implements PIDOutput, PI
     private double minInput = 0.0;
     private double maxInput = 300;
     
-    private boolean cancel = false;
+    private boolean cancelling = false;
     
     public DriveToUltrasonicDistanceY(String ultrasonicName) {
-    	super("DriveToUltrasonicDistance");
+    	super("DriveToUltrasonicDistanceY");
         requires(Robot.mecanumDrive);
         
         this.setInterruptible(true);
         this.setRunWhenDisabled(false);
-        this.ultrasonicKey = ultrasonicName;
+        this.ultrasonicKeys = new String[1];
+        this.ultrasonicKeys[0] = ultrasonicName;
+        Robot.ultrasonics.getUltrasonics().enableUltrasonic(ultrasonicName);
         useSmartDashBoardValues = true;
     }
     
+    public DriveToUltrasonicDistanceY(String[] ultrasonicNames) {
+    	super("DriveToUltrasonicDistanceY");
+        requires(Robot.mecanumDrive);
+        
+        this.setInterruptible(true);
+        this.setRunWhenDisabled(false);
+        this.ultrasonicKeys = new String[1];
+        this.ultrasonicKeys = ultrasonicNames;
+        for(String key : ultrasonicNames) {
+        	Robot.ultrasonics.getUltrasonics().enableUltrasonic(key);
+        }
+        
+        useSmartDashBoardValues = true;
+    }
     
     public DriveToUltrasonicDistanceY(String ultrasonicName, double target, double p, double i, double d, double tolerance) {
-    	super("DriveToUltrasonicDistance");
+    	super("DriveToUltrasonicDistanceY");
         requires(Robot.mecanumDrive);
+        
+        this.ultrasonicKeys = new String[1];
+        this.ultrasonicKeys[0] = ultrasonicName;
+        Robot.ultrasonics.getUltrasonics().enableUltrasonic(ultrasonicName);
         
         this.setInterruptible(true);
         this.setRunWhenDisabled(false);
         useSmartDashBoardValues = false;
-        this.ultrasonicKey = ultrasonicName;
         this.target = target;
         this.kP = p;
         this.kI = i;
@@ -58,14 +98,41 @@ public class DriveToUltrasonicDistanceY extends Command implements PIDOutput, PI
         this.kTolerance = tolerance;        
     }
     
-    public DriveToUltrasonicDistanceY(String ultrasonicName, double target, double p, double i, double d, double tolerance, double minSpeed, double maxSpeed, double minInput, double maxInput) {
-    	super("DriveToUltrasonicDistance");
+    public DriveToUltrasonicDistanceY(String ultrasonicName, double target, double p, double i, double d, double tolerance, double minSpeed) {
+    	super("DriveToUltrasonicDistanceY");
+        requires(Robot.mecanumDrive);
+        
+        this.ultrasonicKeys = new String[1];
+        this.ultrasonicKeys[0] = ultrasonicName;
+        Robot.ultrasonics.getUltrasonics().enableUltrasonic(ultrasonicName);
+        
+        this.setInterruptible(true);
+        this.setRunWhenDisabled(false);
+        useSmartDashBoardValues = false;
+        this.target = target;
+        this.kP = p;
+        this.kI = i;
+        this.kD = d;
+        this.kTolerance = tolerance;
+        this.minSpeed = minSpeed;
+        this.maxSpeed = maxSpeed;
+        this.minInput = minInput;
+        this.maxInput = maxInput;
+        
+    }
+    
+    //check multiple and use the lowest value
+    public DriveToUltrasonicDistanceY(String[] ultrasonicNames, double target, double p, double i, double d, double tolerance, double minSpeed) {
+    	super("DriveToUltrasonicDistanceY");
         requires(Robot.mecanumDrive);
         
         this.setInterruptible(true);
         this.setRunWhenDisabled(false);
         useSmartDashBoardValues = false;
-        this.ultrasonicKey = ultrasonicName;
+        this.ultrasonicKeys = ultrasonicNames;
+        for(String key : ultrasonicNames) {
+        	Robot.ultrasonics.getUltrasonics().enableUltrasonic(key);
+        }
         this.target = target;
         this.kP = p;
         this.kI = i;
@@ -80,9 +147,7 @@ public class DriveToUltrasonicDistanceY extends Command implements PIDOutput, PI
     
     //be sure the ultrasonics are enabled prior to getting to this point... 
     // attempting to enable them in the command will likely lead to sporadic behavior
-    protected void initialize() {
-    	this.cancel = false;
-    
+    protected void initialize() {   
     	if(useSmartDashBoardValues) {
 	    	target = SmartDashboard.getNumber("USDD Target", 24.0);
 			kP = SmartDashboard.getNumber("USDD P", 0.01);
@@ -93,6 +158,13 @@ public class DriveToUltrasonicDistanceY extends Command implements PIDOutput, PI
 			kTolerance = SmartDashboard.getNumber("USDD Tolerance", 12);
     	}
     	
+    	ahrs = Robot.getAhrs();
+    	skewController = new PIDController(this.skewP, 0.0, 0.0, 0.0, Robot.getAhrs(), skewPidOutput);
+    	skewController.setInputRange(-180, 180);
+    	skewController.setOutputRange(-1.0, 1.0);
+    	skewController.setAbsoluteTolerance(skewTolerance);
+    	skewController.setContinuous(true);
+    	
     	pidController = new PIDController(kP, kI, kD, kF, this, this);
     	pidController.setInputRange(minInput, maxInput);
     	pidController.setOutputRange(maxSpeed * -1.0, maxSpeed);
@@ -100,40 +172,47 @@ public class DriveToUltrasonicDistanceY extends Command implements PIDOutput, PI
     	pidController.setContinuous(false);
         pidController.setSetpoint(target);
         
-        System.out.println("CMD USDD: Starting - target: " + this.target + ", current: " + Robot.ultrasonics.getUltrasonics().getDistanceInches(ultrasonicKey));
+        System.out.println("CMD USDD_Y: Starting (" + System.currentTimeMillis() + ") - target: " + this.target + ", current: " + getShortest());
     }
 
    
     protected void execute() {
-    	if(pidController == null && !this.cancel) {
+    	if(pidController == null && !this.cancelling) {
     		this.initialize();
     	}
-    	if(!pidController.isEnabled() && !this.cancel){
+    	if(!pidController.isEnabled() && !this.cancelling){
     		pidController.enable();
+    		skewController.setSetpoint(this.ahrs.pidGet());
     	}
     }
 
     
     protected boolean isFinished() {
-    	if(this.cancel){ return true; }
+    	if(this.cancelling){ return true; }
     	return pidController.onTarget();
     }
 
     
     protected void end() {
-    	 System.out.println("CMD USDD: Ended - target: " + this.target + ", current: " + Robot.ultrasonics.getUltrasonics().getDistanceInches(ultrasonicKey));
+    	System.out.println("CMD USDD_Y: Ended(" + System.currentTimeMillis() + ") - target: " + this.target + ", current: " + getShortest());
     	Robot.mecanumDrive.stop();
     	pidController.disable();
     	pidController = null;
+    	skewController.disable();
+    	skewController = null;
+    	this.cancelling = false;
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	System.out.println("CMD USDD: Interrupted - target: " + this.target + ", current: " + Robot.ultrasonics.getUltrasonics().getDistanceInches(ultrasonicKey));
+    	System.out.println("CMD USDD_Y: Interrupted(" + System.currentTimeMillis() + ") - target: " + this.target + ", current: " + getShortest());
     	Robot.mecanumDrive.stop();
     	pidController.disable();
     	pidController = null;
+    	skewController.disable();
+    	skewController = null;
+    	this.cancelling = false;
     }
     
     
@@ -145,36 +224,59 @@ public class DriveToUltrasonicDistanceY extends Command implements PIDOutput, PI
     	
     }
     
+    
+    private double getShortest(){
+    	double shortest = 10000;
+    	double temp = 0.0;
+    	 for(String key : ultrasonicKeys) {
+         	temp = Robot.ultrasonics.getUltrasonics().getDistanceInches(key);
+         	if(temp < shortest) {
+         		shortest = temp;
+         	}
+        }
+    	return shortest;
+    }
+    
+    
     public double pidGet(){
-    	double i = 0.0;
+    	double distance = -1.0;
     	int countInvalid = 0;
+    	
     	while(true) {
-    		i = Robot.ultrasonics.getUltrasonics().getDistanceInches(ultrasonicKey);
-    		if(i < 0.0 || i > 250){
+    		distance = getShortest();
+    		if(distance < 0.0 || distance > 250){
         		countInvalid++;
         		if(countInvalid == 3) {
-            		System.out.println("CMD USDD: Warning! Three invalid measurements received.. ending command");
-            		this.cancel = true;
+            		System.out.println("CMD USDD_Y: Warning! Three invalid measurements received.. ending command");
+            		this.cancelling = true;
+            		return this.target;
             	} 
         	} else {
-        		return i;
+        		return distance;
         	}
     	}
     }
     
     public void pidWrite(double output) {
-    	if(this.cancel){ 
+    	if(this.pidController ==  null) { 
+    		System.out.println("CMD USDD_Y: Warning! pidWrite Called after pidController set to null!");
+    		Robot.mecanumDrive.stop();
+    		return;
+    	}
+    	
+    	if(this.cancelling || this.isFinished()){ 
     		Robot.mecanumDrive.stop(); 
     	} else {
+    		output = output * -1.0;
     		if(Math.abs(output) < this.minSpeed) {
-    			//System.out.println("CMD USDD: MinSpeed Reached (Output: " + output + ")");
+    			//System.out.println("CMD USDD_Y: MinSpeed Reached (Output: " + output + ")");
     			if(output > 0.0) {
-    				Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, minSpeed, 0.0, 0.0);
+    				Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, minSpeed, this.skewPidOutput.getPidOutputValue() , 0.0);
     			} else {
-    				Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, minSpeed * -1.0, 0.0, 0.0);
+    				Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, minSpeed * -1.0, this.skewPidOutput.getPidOutputValue(), 0.0);
     			}
     		} else {
-    			Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, output, 0.0, 0.0);
+    			Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, output, this.skewPidOutput.getPidOutputValue(), 0.0);
     		}
     	}
     }

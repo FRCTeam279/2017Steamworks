@@ -121,9 +121,9 @@ public class YawPID extends Command implements PIDOutput {
     	pidController.setAbsoluteTolerance(kTolerance);
         pidController.setSetpoint(targetHeading);
         if(this.useRelativeYaw){
-        	System.out.println("CMD YawPID: Starting - yaw (relative): " + yaw + ", target: " + targetHeading + ", current: " + Robot.getAhrs().pidGet());
+        	System.out.println("CMD YawPID: Starting(" + System.currentTimeMillis() + ") - yaw (relative): " + yaw + ", target: " + targetHeading + ", current: " + Robot.getAhrs().pidGet());
         } else {
-        	System.out.println("CMD YawPID: Starting - yaw (absolute): " + yaw + ", target: " + targetHeading + ", current: " + Robot.getAhrs().pidGet());
+        	System.out.println("CMD YawPID: Starting(" + System.currentTimeMillis() + ") - yaw (absolute): " + yaw + ", target: " + targetHeading + ", current: " + Robot.getAhrs().pidGet());
         }
     }
 
@@ -137,58 +137,58 @@ public class YawPID extends Command implements PIDOutput {
     	if(!pidController.isEnabled()){
     		pidController.enable();
     	}
-    	
-    	
     }
 
     
     protected boolean isFinished() {
-    	System.out.println("CMD YawPID isFinished: Current yaw = " + Robot.getAhrs().pidGet() + ", OnTarget = " + pidController.onTarget());
-    	if(pidController.onTarget()) {
-    		pidController.disable();
-    		Robot.mecanumDrive.stop();
-    		return true;
-    	} else {
-    		return false;
-    	}
-    
-    	
+    	if(this.cancel){ return true; }
+    	return pidController.onTarget();
     }
 
     
     protected void end() {
-    	System.out.println("CMD YawPID: Ended - target: " + targetHeading + ", current: " + Robot.getAhrs().pidGet());
+    	System.out.println("CMD YawPID: Ended(" + System.currentTimeMillis() + ") - target: " + targetHeading + ", current: " + Robot.getAhrs().pidGet());
     	Robot.mecanumDrive.stop();
-    	this.pidController.disable();
     	pidController.disable();
     	pidController = null;
+    	this.cancel = false;
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	System.out.println("CMD YawPID: Interrupted - target: " + targetHeading + ", current: " + Robot.getAhrs().pidGet());
+    	System.out.println("CMD YawPID: Interrupted(" + System.currentTimeMillis() + ") - target: " + targetHeading + ", current: " + Robot.getAhrs().pidGet());
     	Robot.mecanumDrive.stop();
     	pidController.disable();
     	pidController = null;
+    	this.cancel = false;
     }
     
     
     
     //remember that -Y is forwards
     public void pidWrite(double output) {
-    
-    	if(Math.abs(output) < this.minSpeed) {
-			double tSpd = minSpeed;
-			if(output < 0.0) {
-				tSpd = minSpeed * -1.0;
-			} 
-			//System.out.println("CMD YawPID: current: " + Robot.getAhrs().pidGet() + ", Output=" +  output + " minspeed=" + tSpd);
-			Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, 0.0, tSpd, 0.0);
-			
-		} else {
-			//System.out.println("CMD YawPID: current: " + Robot.getAhrs().pidGet() + ",  Output=" +  output);
-			Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, 0.0, output, 0.0);
-		}
+    	if(this.pidController ==  null) { 
+    		System.out.println("CMD YawPID: Warning! pidWrite Called after pidController set to null!");
+    		Robot.mecanumDrive.stop();
+    		return;
+    	}
+    	
+    	if(this.cancel || this.isFinished()){ 
+    		Robot.mecanumDrive.stop(); 
+    	} else {
+	    	if(Math.abs(output) < this.minSpeed) {
+				double tSpd = minSpeed;
+				if(output < 0.0) {
+					tSpd = minSpeed * -1.0;
+				} 
+				//System.out.println("CMD YawPID: current: " + Robot.getAhrs().pidGet() + ", Output=" +  output + " minspeed=" + tSpd);
+				Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, 0.0, tSpd, 0.0);
+				
+			} else {
+				//System.out.println("CMD YawPID: current: " + Robot.getAhrs().pidGet() + ",  Output=" +  output);
+				Robot.mecanumDrive.getRoboDrive().mecanumDrive_Cartesian(0.0, 0.0, output, 0.0);
+			}
+    	}
     }
 }
