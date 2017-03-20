@@ -36,7 +36,7 @@ public class RotateToCenterVisionTarget extends Command implements PIDOutput {
     private double minSpeed = -1.0;
     private double maxSpeed = 1.0;
 
-    private double imageWidth = 320.0;  //TODO:  ALSO need to make FOV a variable
+    private double imageWidth = 320.0;
     
     private boolean cancel = false;
     private int errorCount = 0;
@@ -44,25 +44,24 @@ public class RotateToCenterVisionTarget extends Command implements PIDOutput {
     private SamplesSystem samples = new SamplesSystem();
     private int sampleCount = 0;
     
-    public RotateToCenterVisionTarget(String table, String key, double imgWidth) {
+    public RotateToCenterVisionTarget(String table, String key) {
     	super("RotateToCenterVisionTarget");
         requires(Robot.mecanumDrive);
         this.table = table;
         this.key = key;
         this.setInterruptible(true);
         this.setRunWhenDisabled(false);
-        imageWidth = imgWidth;
+
         useSmartDashBoardValues = true;
     }
     
     
-    public RotateToCenterVisionTarget(String table, String key,  double imgWidth, double p, double i, double d, double tolerance) {
+    public RotateToCenterVisionTarget(String table, String key, double p, double i, double d, double tolerance) {
     	super("RotateToCenterVisionTarget");
         requires(Robot.mecanumDrive);
         
         this.setInterruptible(true);
         this.setRunWhenDisabled(false);
-        imageWidth = imgWidth;
         useSmartDashBoardValues = false;
         this.table = table;
         this.key = key;
@@ -72,13 +71,12 @@ public class RotateToCenterVisionTarget extends Command implements PIDOutput {
         this.kTolerance = Math.abs(tolerance);        
     }
     
-    public RotateToCenterVisionTarget(String table, String key,  double imgWidth, double p, double i, double d, double tolerance, double minSpeed) {
+    public RotateToCenterVisionTarget(String table, String key, double p, double i, double d, double tolerance, double minSpeed) {
     	super("RotateToCenterVisionTarget");
         requires(Robot.mecanumDrive);
         
         this.setInterruptible(true);
         this.setRunWhenDisabled(false);
-        imageWidth = imgWidth;
         useSmartDashBoardValues = false;
         this.table = table;
         this.key = key;
@@ -138,18 +136,14 @@ public class RotateToCenterVisionTarget extends Command implements PIDOutput {
 		    		samples.setSample(nt.getNumber(key, 0.0));
 		    	}
 	    	} else {
-	    		//picamera fov 62.2deg
-	    		// http://elinux.org/Rpi_Camera_Module#Technical_Parameters_.28v.2_board.29
-	    		
-	    		double pixelOffset = samples.getAverage();
-	    		double degreeOffset = (pixelOffset/this.imageWidth) * 62.2; 
-	    		System.out.println("CMD RotateToCenterVisionTarget: pixelOffset Avg = " + pixelOffset + ", degreeOffset = " + degreeOffset);
+	    		double angle = samples.getAverage();
+	    		System.out.println("CMD RotateToCenterVisionTarget: angle avg = " + angle);
 	    		
 	    		// setpoint to the inverse of the offset, and add to current yaw
-	    		targetHeading = NavHelper.addDegreesYaw(degreeOffset * -1.0, Robot.getAhrs().getYaw());
+	    		targetHeading = NavHelper.addDegreesYaw((angle * -1.0), Robot.getAhrs().getYaw());
 	    		pidController.setSetpoint(targetHeading);
 	    		pidController.enable();
-	    		System.out.println("CMD RotateToCenterVisionTarget: Starting - degreeOffset: " + degreeOffset + ", targetHeading: " + targetHeading + ", current: " + Robot.getAhrs().pidGet());
+	    		System.out.println("CMD RotateToCenterVisionTarget: Starting - angle: " + angle + ", targetHeading: " + targetHeading + ", current: " + Robot.getAhrs().pidGet());
 	    	}
     	}
         
@@ -157,6 +151,7 @@ public class RotateToCenterVisionTarget extends Command implements PIDOutput {
 
     
     protected boolean isFinished() {
+    	if(this.cancel){ return true; }
     	return pidController.onTarget();
     }
 
@@ -185,7 +180,7 @@ public class RotateToCenterVisionTarget extends Command implements PIDOutput {
     //remember that -Y is forwards
     public void pidWrite(double output) {
     	
-    	if(this.cancel){ 
+    	if(this.cancel || this.isFinished()){ 
     		Robot.mecanumDrive.stop(); 
     	} else {
     		if(Math.abs(output) < this.minSpeed) {
