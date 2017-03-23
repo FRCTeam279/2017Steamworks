@@ -12,7 +12,7 @@ public class GearGizmo extends Subsystem {
 	
 	private String prefPrefix = "gg_";
 
-	private int doorMotorPort = 4;
+	private int doorMotorPort = 7;
 
 	private int openDoorSwitchPort = 20;
 	private int closeDoorSwitchPort = 19;

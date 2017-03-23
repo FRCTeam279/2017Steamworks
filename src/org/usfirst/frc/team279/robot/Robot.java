@@ -24,7 +24,7 @@ public class Robot extends IterativeRobot {
 	
 	private String prefPrefix = "robot_";
 	
-	private static boolean setForTesting = false; //allow commands to query if we ra trying to set for competition or testing
+	private static boolean setForTesting = true; //allow commands to query if we ra trying to set for competition or testing
 	public static boolean getSetForTesting(){
 		return setForTesting;
 	}
@@ -60,6 +60,9 @@ public class Robot extends IterativeRobot {
 	public static final GearGizmo    	geargizmo    = new GearGizmo();
 	public static final CamLightsShooter camLightShooter = new CamLightsShooter();
 	public static final CamLightsGear 	camLightsGear = new CamLightsGear();
+	public static final Climber climber = new Climber();
+	public static final LedStrip ledStrip = new LedStrip();
+	public static final GearPusher gearPusher = new GearPusher();
 	
 	public static OI oi;
 	
@@ -84,6 +87,12 @@ public class Robot extends IterativeRobot {
 			Robot.mecanumDrive.init();
 		} catch(RuntimeException e) {
 			DriverStation.reportError("Robot: Error instantiating MecanumDrive:  " + e.getMessage(), true);
+		}
+		
+		try {
+			Robot.climber.init();
+		} catch(RuntimeException e) {
+			DriverStation.reportError("Robot: Error instantiating Climber:  " + e.getMessage(), true);
 		}
 		
 		try {
@@ -120,9 +129,21 @@ public class Robot extends IterativeRobot {
 		}
 		
 		try {
+			Robot.gearPusher.init();
+		} catch(RuntimeException e) {
+			DriverStation.reportError("Robot: Error instantiating GearPusher:  " + e.getMessage(), true);
+		}
+		
+		try {
 			camLightsGear.init();
 		} catch(RuntimeException e) {
 			DriverStation.reportError("Robot: Error instantiating Gear Lights:  " + e.getMessage(), true);
+		}
+		
+		try {
+			ledStrip.init();
+		} catch(RuntimeException e) {
+			DriverStation.reportError("Robot: Error instantiating LED Strip:  " + e.getMessage(), true);
 		}
 		//Subsystem Init's -- End
 		
@@ -160,8 +181,8 @@ public class Robot extends IterativeRobot {
 		//SmartDashboard.putData("DriveEnc Execute LFEnc", new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront()));
 		//SmartDashboard.putData("DriveEnc Execute RFEnc", new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderRightFront()));
 		
-		
-		
+		SmartDashboard.putData("Gear Push",(new GearPusherPush()));
+		SmartDashboard.putData("Gear Retract",(new GearPusherRetract()));
 		
 		//** AUTO CHOOSER **************************************
 		chooser.addDefault("Default Auto", new DefaultAuto());

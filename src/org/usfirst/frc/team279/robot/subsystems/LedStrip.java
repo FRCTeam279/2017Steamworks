@@ -25,7 +25,10 @@ public class LedStrip extends Subsystem {
     	strip = new DotStarsLEDStrip(numLEDs);
     	
     	for(int i = 0; i < numLEDs; i++) {
-    		strip.setLEDColor(i,  0, 8 ,  64);	
+    		// red
+    		// blue 
+    		// green
+    		strip.setLEDColor(i,  0.0, 0.5,  0.2);	
     	}
     	
     }

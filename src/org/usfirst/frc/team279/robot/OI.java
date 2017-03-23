@@ -76,6 +76,8 @@ public class OI {
 	private JoystickButton openGearBtn;
 	private JoystickButton closeGearBtn;
 	private JoystickButton autoGearBtn;
+	private JoystickButton climbBtn;
+	private JoystickButton ejectGearBtn;
 	
 	
 	
@@ -130,16 +132,21 @@ public class OI {
 		autoGearBtn = new JoystickButton(goController, 5);
 		
 		
+		
 		//Applying buttons to commands
 		resetGyroBtn.whenPressed(new ResetGyro());
 		gearSaveBtn.whenPressed(new GearPosSave());
 		
 		
-		pointAtBoiler.whenPressed(new PointAtBoiler());
+		//pointAtBoiler.whenPressed(new PointAtBoiler());
 		pointAtGear.whenPressed(new PointAtGear());
 		//unloadGear.whenPressed(new UnloadGear());
 		
+		climbBtn = new JoystickButton(goController, 10);
+		climbBtn.whileHeld(new RunClimber());
 		
+		ejectGearBtn = new JoystickButton(goController, 9);
+		ejectGearBtn.whenPressed(new PushGearAndRetract());
 		
 		harvForwardBtn.whenPressed(new RunHarvelatorFWD());
 		harvForwardBtn.whenReleased(new StopHarvelator());
