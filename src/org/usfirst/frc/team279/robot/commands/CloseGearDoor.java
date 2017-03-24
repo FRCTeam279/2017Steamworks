@@ -11,7 +11,7 @@ public class CloseGearDoor extends Command {
 	
     public CloseGearDoor() {
         requires(Robot.geargizmo);
-        this.setTimeout(1.25);
+        this.setTimeout(1.0);
     }
 
     // Called just before this Command runs the first time
@@ -38,6 +38,7 @@ public class CloseGearDoor extends Command {
     protected void end() {
     	Robot.geargizmo.stopDoor();
     	Robot.geargizmo.resetOpenSwitch();
+    	Robot.geargizmo.resetCloseSwitch();
     }
 
     // Called when another command which requires one or more of the same
@@ -45,5 +46,6 @@ public class CloseGearDoor extends Command {
     protected void interrupted() {
     	Robot.geargizmo.stopDoor();
     	Robot.geargizmo.resetOpenSwitch();
+    	Robot.geargizmo.resetCloseSwitch();
     }
 }

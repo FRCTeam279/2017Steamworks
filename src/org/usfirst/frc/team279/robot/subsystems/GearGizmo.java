@@ -66,6 +66,9 @@ public class GearGizmo extends Subsystem {
 		
 		gearPosSwitch = new DigitalInput(gearPosSwitchPort);
 		System.out.println("GG: Photo Eye Setup");
+		
+		this.resetCloseSwitch();
+		this.resetOpenSwitch();
 	}
 	
 	public void loadPrefs() {
@@ -81,15 +84,15 @@ public class GearGizmo extends Subsystem {
 	
 	//***DOOR MOTOR************************************************
 	public void openDoor() {
-		if(!getOpenCount()){
+		//if(!getOpenCount()){
 			doorMotor.set(doorSpeed);
-		}
+		//}
 	}
 	
 	public void closeDoor () {
-		if(!getCloseCount()){
+		//if(!getCloseCount()){
 			doorMotor.set(-doorSpeed);
-		}
+		//}
 	}
 	
 	public void stopDoor() {

@@ -9,7 +9,7 @@ public class OpenGearDoor extends Command {
 	
     public OpenGearDoor() {
         requires(Robot.geargizmo);
-        this.setTimeout(1.25);
+        this.setTimeout(1.0);
     }
 
     // Called just before this Command runs the first time
@@ -25,7 +25,7 @@ public class OpenGearDoor extends Command {
     protected boolean isFinished() {
     	if(this.isTimedOut()) {
     		return true;
-    	} else if(Robot.geargizmo.getOpenCount()) {
+    	} else if(Robot.geargizmo.getOpenCount() || Robot.geargizmo.getOpenDoorSwitch().get()) {
     		return true;
     	} else {
     		return false;
@@ -35,6 +35,7 @@ public class OpenGearDoor extends Command {
     // Called once after isFinished returns true
     protected void end() {
     	Robot.geargizmo.stopDoor();
+    	Robot.geargizmo.resetOpenSwitch();
     	Robot.geargizmo.resetCloseSwitch();
     }
 
@@ -42,6 +43,7 @@ public class OpenGearDoor extends Command {
     // subsystems is scheduled to run
     protected void interrupted() {
     	Robot.geargizmo.stopDoor();
+    	Robot.geargizmo.resetOpenSwitch();
     	Robot.geargizmo.resetCloseSwitch();
     }
 }

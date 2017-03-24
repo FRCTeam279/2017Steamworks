@@ -20,7 +20,7 @@ public class AutoRightGear extends CommandGroup {
     	
     	
     	if(Robot.getSetForTesting()){
-    		addSequential(new DriveToEncoderDistanceHoldHeading(Robot.mecanumDrive.getEncoderLeftFront(), 0, -750, 0.004, 0, 0, 20, 0.2, 1.0, -10000, 10000), 3.5);
+    		addSequential(new DriveToEncoderDistanceHoldHeading(Robot.mecanumDrive.getEncoderLeftFront(), 0, -700, 0.004, 0, 0, 20, 0.2, 1.0, -10000, 10000), 3.5);
         	addSequential(new YawPID(-145, 0.008, 0, 0, 2, .2), 2.5);
         	
     		addSequential(new Delay(200));

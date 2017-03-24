@@ -85,7 +85,7 @@ public class LEDColor extends Command {
     				  && ((seeBoiler && Math.abs(boilerAngle) > 5) || (seeGear && Math.abs(gearAngle) > 5))
     				 ) {
     			 for(int i = 0; i < numLEDs; i++) {
-      	    		strip.setLEDColor(i,  0.3, 0.3 ,  0.0);	
+      	    		strip.setLEDColor(i,  0.3, 0.0 ,  0.3);	
          		 } 
     			 return;
     	 	 } else {
