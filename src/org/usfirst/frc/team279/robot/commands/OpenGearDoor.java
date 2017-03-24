@@ -9,7 +9,7 @@ public class OpenGearDoor extends Command {
 	
     public OpenGearDoor() {
         requires(Robot.geargizmo);
-        this.setTimeout(10);
+        this.setTimeout(1.25);
     }
 
     // Called just before this Command runs the first time
@@ -18,11 +18,7 @@ public class OpenGearDoor extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	if(!Robot.geargizmo.getOpenCount()) {
     		Robot.geargizmo.openDoor();
-    	} else {
-    		Robot.geargizmo.stopDoor();
-    	}
     }
 
     // Make this return true when this Command no longer needs to run execute()

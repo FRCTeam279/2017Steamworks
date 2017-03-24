@@ -11,7 +11,7 @@ public class CloseGearDoor extends Command {
 	
     public CloseGearDoor() {
         requires(Robot.geargizmo);
-        this.setTimeout(10);
+        this.setTimeout(1.25);
     }
 
     // Called just before this Command runs the first time

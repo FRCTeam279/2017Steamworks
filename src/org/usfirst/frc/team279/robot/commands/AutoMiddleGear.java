@@ -12,11 +12,11 @@ public class AutoMiddleGear extends CommandGroup {
     	
     	addSequential(new GearCamLightToggleHigh());
     	
-    	addSequential(new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront(), 0, -400, 0.007, 0, 0, 20, 0.2, 1.0, -10000, 10000), 3.0);
+    	addSequential(new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront(), 0, -400, 0.006, 0, 0, 20, 0.2, 1.0, -10000, 10000), 3.0);
     	addSequential(new Delay(350));
-    	addSequential(new YawPID(-90, 0.008, 0.00001, 0, 3.0, 0.2, false), 2.5);
-    	addSequential(new Delay(200));
-    	addSequential(new RotateToCenterVisionTarget("Gear", "angle", 0.008, 0.0001, 0.0, 3.0, 0.18), 1.5);
+    	addSequential(new YawPID(-90, 0.008, 0.00002, 0, 3.0, 0.25, false), 2.5);
+    	//addSequential(new Delay(200));
+    	//addSequential(new RotateToCenterVisionTarget("Gear", "angle", 0.008, 0.0001, 0.0, 3.0, 0.18), 1.5);
     	
     	//if(Robot.getSetForTesting()){
 	    	addSequential(new Delay(100));

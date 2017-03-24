@@ -28,7 +28,11 @@ public class LedStrip extends Subsystem {
     		// red
     		// blue 
     		// green
-    		strip.setLEDColor(i,  0.0, 0.5,  0.2);	
+    		
+    		//blue
+    		//strip.setLEDColor(i,  0.0, 0.5,  0.2);
+    		
+    		strip.setLEDColor(i,  0.3, 0.0,  0.0);
     	}
     	
     }
