@@ -1,17 +1,20 @@
 package org.usfirst.frc.team279.robot.commands;
 
 import org.usfirst.frc.team279.robot.Robot;
+import org.usfirst.frc.team279.robot.subsystems.CamLightsGear;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class CloseGearDoor extends Command {
-	
-    public CloseGearDoor() {
-        requires(Robot.geargizmo);
-        this.setTimeout(1.25);
+public class GearCamLightLowSetOff extends Command {
+
+    public GearCamLightLowSetOff() {
+    	super("GearCamLightLowSetOff");
+    	requires(Robot.camLightsGear);
+        this.setInterruptible(true);
+        this.setRunWhenDisabled(true);
     }
 
     // Called just before this Command runs the first time
@@ -20,30 +23,21 @@ public class CloseGearDoor extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    		Robot.geargizmo.closeDoor();
+    	
+    	Robot.camLightsGear.gearLightLow.set(false);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if(this.isTimedOut()) {
-    		return true;
-    	} else if(Robot.geargizmo.getCloseCount()){
-    		return true;
-    	} else {
-    		return false;
-    	}
+        return true;
     }
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.geargizmo.stopDoor();
-    	Robot.geargizmo.resetOpenSwitch();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	Robot.geargizmo.stopDoor();
-    	Robot.geargizmo.resetOpenSwitch();
     }
 }

@@ -7,17 +7,39 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class AutoLeftGear extends CommandGroup {
 
     public AutoLeftGear() {
-    	Robot.getAhrs().reset();
+    	addSequential(new ResetGyro());
+    	addSequential(new ResetEncoders());
     	
+    	//0.13" per pulse
+    	// 600 = ~ 70"
     	//9.55pulses per inch on prod going ahead (4"/120p).. ~half that going sideways
     	//13.26pulses per inch on mule (was 6"/250)
     	addSequential(new GearCamLightToggleHigh());
     	
-    	addSequential(new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront(), 0, -600, 0.0055, 0, 0, 20, 0.2, 1.0, -10000, 10000), 3.5);
-    	addSequential(new YawPID(-35, 0.008, 0, 0, 2, .2), 2.5);
+    	
     	
     	if(Robot.getSetForTesting()){
+    		addSequential(new DriveToEncoderDistanceHoldHeading(Robot.mecanumDrive.getEncoderLeftFront(), 0, -750, 0.004, 0, 0, 20, 0.2, 1.0, -10000, 10000), 3.5);
+        	addSequential(new YawPID(-35, 0.008, 0, 0, 2, .2), 2.5);
+    		
     		addSequential(new Delay(200));
+        	addSequential(new RotateToCenterVisionTarget("Gear", "angle", 0.008, 0.0001, 0.0, 3.0, 0.18), 1.5);
+        	
+	    	addSequential(new CloseGearDoor(), 0.5);
+	    	addSequential(new OpenGearDoor(), 1.5);
+	    	
+	    	addSequential(new DriveToUltrasonicDistanceX(new String[] { "rangeGearLeft", "rangeGearRight" }, 3.75, 0.03, 0.00001, 0.0, 0.75, 0.3), 2.0);
+	    	addSequential(new PushGearAndRetract());
+	    	addSequential(new Delay(1000));
+	    	
+	    	//addSequential(new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderRightFront(), 90, -400, 0.004, 0, 0, 20, 0.2, 1.0, -10000, 10000), 3.0);
+	    	addSequential(new DriveToUltrasonicDistanceX(new String[] { "rangeGearLeft", "rangeGearRight" }, 24.0, 0.06, 0.00001, 0.0, 1.0, 0.3), 3.3);
+    	} else {
+    		//Use this on the field
+    		addSequential(new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront(), 0, -750, 0.004, 0, 0, 20, 0.2, 1.0, -10000, 10000), 3.5);
+        	addSequential(new YawPID(-35, 0.008, 0, 0, 2, .2), 2.5);
+        	
+        	addSequential(new Delay(200));
         	addSequential(new RotateToCenterVisionTarget("Gear", "angle", 0.008, 0.0001, 0.0, 3.0, 0.18), 1.5);
         	
 	    	addSequential(new CloseGearDoor(), 0.5);

@@ -10,19 +10,19 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class AutoRightGear extends CommandGroup {
 
     public AutoRightGear() {
-    	
-    	Robot.getAhrs().reset();
+    	addSequential(new ResetGyro());
+    	addSequential(new ResetEncoders());
     	
     	
     	//9.55pulses per inch on prod going ahead (4"/120p).. ~half that going sideways
     	//13.26pulses per inch on mule (was 6"/250)
     	addSequential(new GearCamLightToggleHigh());
     	
-    	addSequential(new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront(), 0, -600, 0.0055, 0, 0, 20, 0.2, 1.0, -10000, 10000), 3.5);
-    	addSequential(new YawPID(-145, 0.008, 0, 0, 2, .2), 2.5);
-    	
     	
     	if(Robot.getSetForTesting()){
+    		addSequential(new DriveToEncoderDistanceHoldHeading(Robot.mecanumDrive.getEncoderLeftFront(), 0, -750, 0.004, 0, 0, 20, 0.2, 1.0, -10000, 10000), 3.5);
+        	addSequential(new YawPID(-145, 0.008, 0, 0, 2, .2), 2.5);
+        	
     		addSequential(new Delay(200));
         	addSequential(new RotateToCenterVisionTarget("Gear", "angle", 0.008, 0.0001, 0.0, 3.0, 0.18), 1.5);
         	
@@ -34,6 +34,9 @@ public class AutoRightGear extends CommandGroup {
 	    	addSequential(new Delay(1000));
 	    	
 	    	//addSequential(new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderRightFront(), 90, -400, 0.004, 0, 0, 20, 0.2, 1.0, -10000, 10000), 3.0);
+    	} else {
+    		addSequential(new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderLeftFront(), 0, -750, 0.004, 0, 0, 20, 0.2, 1.0, -10000, 10000), 3.5);
+        	addSequential(new YawPID(-145, 0.008, 0, 0, 2, .2), 2.5);
     	}
     	addSequential(new GearCamLightToggleHigh());
     }

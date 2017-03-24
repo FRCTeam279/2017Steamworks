@@ -1,5 +1,6 @@
 package org.usfirst.frc.team279.robot.subsystems;
 
+import org.usfirst.frc.team279.robot.commands.LEDColor;
 import org.usfirst.frc.team279.util.DotStarsLEDStrip;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -30,9 +31,9 @@ public class LedStrip extends Subsystem {
     		// green
     		
     		//blue
-    		//strip.setLEDColor(i,  0.0, 0.5,  0.2);
+    		strip.setLEDColor(i,  0.0, 0.5,  0.2);
     		
-    		strip.setLEDColor(i,  0.3, 0.0,  0.0);
+    		//strip.setLEDColor(i,  0.3, 0.0,  0.0);
     	}
     	
     }
@@ -41,7 +42,7 @@ public class LedStrip extends Subsystem {
     
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
-        //setDefaultCommand(new MySpecialCommand());
+        setDefaultCommand(new LEDColor());
     }
 }
 

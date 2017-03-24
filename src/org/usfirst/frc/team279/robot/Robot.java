@@ -229,6 +229,7 @@ public class Robot extends IterativeRobot {
 	
 
 	public void disabledInit() {
+		Robot.camLightsGear.gearLightLow.set(false);
 
 	}
 
@@ -253,6 +254,7 @@ public class Robot extends IterativeRobot {
 	
 	
 	public void teleopInit() {
+		Robot.camLightsGear.gearLightLow.set(true);
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
 	}
