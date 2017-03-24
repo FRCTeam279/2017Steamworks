@@ -24,8 +24,8 @@ public class AutoLeftGear extends CommandGroup {
 	    	addSequential(new OpenGearDoor(), 1.5);
 	    	
 	    	addSequential(new DriveToUltrasonicDistanceX(new String[] { "rangeGearLeft", "rangeGearRight" }, 3.75, 0.03, 0.00001, 0.0, 0.75, 0.3), 2.0);
-	    	
-	    	addSequential(new Delay(1500));
+	    	addSequential(new PushGearAndRetract());
+	    	addSequential(new Delay(1000));
 	    	
 	    	//addSequential(new DriveToEncoderDistance(Robot.mecanumDrive.getEncoderRightFront(), 90, -400, 0.004, 0, 0, 20, 0.2, 1.0, -10000, 10000), 3.0);
 	    	addSequential(new DriveToUltrasonicDistanceX(new String[] { "rangeGearLeft", "rangeGearRight" }, 24.0, 0.06, 0.00001, 0.0, 1.0, 0.3), 3.3);

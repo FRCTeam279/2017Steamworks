@@ -24,7 +24,7 @@ public class Robot extends IterativeRobot {
 	
 	private String prefPrefix = "robot_";
 	
-	private static boolean setForTesting = true; //allow commands to query if we ra trying to set for competition or testing
+	private static boolean setForTesting = false; //allow commands to query if we ra trying to set for competition or testing
 	public static boolean getSetForTesting(){
 		return setForTesting;
 	}
